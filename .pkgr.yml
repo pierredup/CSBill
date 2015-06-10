@@ -6,24 +6,17 @@ group: "apache"
 buildpack: https://github.com/heroku/heroku-buildpack-php.git#master
 env:
   - STACK=cedar
-
+  - LD_LIBRARY_PATH=/app/php/ext
+  
 targets:
-  centos-7:
-    build_dependencies:
-      - readline
-      - readline-devel
-      - php-mbstring
-    dependencies:
-      - mysql
-      - php-twig-ctwig
+    centos-7: ~
+  
 #  debian-7:
 #    - libreadline5
 #    - libreadline-dev
 #  ubuntu-14.04:
 #    - libreadline5
 #    - libreadline-dev
-env:
-  - LD_LIBRARY_PATH=/app/php/ext
 # turn off emails for now
 notifications: false
 
