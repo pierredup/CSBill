@@ -1,1 +1,18 @@
+env:
+  - S3_BUCKET=chh-heroku-buildpack-php
+  - S3_REGION=eu-west-1
+    
+  # Uncomment if you want debug output and set -x
+  - BUILDPACK_DEBUG=yes
+    
+  - PHP_MODULE_API_VERSIONS["5.3"]="20090626"
+  - PHP_MODULE_API_VERSIONS["5.4"]="20100525"
+  - PHP_MODULE_API_VERSIONS["5.5"]="20121212"
+    
+  - PHP_EXT_DEPENDENCIES["amqp"]="librabbitmq-0.5.2"
+  - PHP_EXT_DEPENDENCIES["ssh2"]="libssh2-1.4.3"
+    
+  - DEPENDENCY_TARGET["librabbitmq-0.5.2"]="/app/vendor/librabbitmq"
+  - DEPENDENCY_TARGET["libssh2-1.4.3"]="/app/vendor/libssh2"
+
 buildpack: https://github.com/CHH/heroku-buildpack-php
