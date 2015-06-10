@@ -12,6 +12,7 @@ targets:
     build_dependencies:
       - readline
       - readline-devel
+      - php-mbstring
     dependencies:
       - mysql
       - php-twig-ctwig
