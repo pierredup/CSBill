@@ -12,9 +12,8 @@ targets:
       - php-twig-ctwig
 
 before:
-    - sudo pip install boto
-    - sudo pip install docopt
-    - sudo pip install envoy
+    - pip install boto
+    - pip install docopt
 
 after:
     - cat /home/pkgr/.pip/pip.log
