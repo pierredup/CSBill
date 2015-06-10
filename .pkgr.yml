@@ -6,6 +6,7 @@ targets:
       - readline
       - readline-devel
       - python-pip
+      - python-setuptools
     dependencies:
       - mysql
       - php-twig-ctwig
