@@ -10,7 +10,7 @@ targets:
       - php-twig-ctwig
       
 before:
-    - yum update -y
+    - sudo yum update -y
     - python --version
     - which python
     - ls -la /usr/bin
