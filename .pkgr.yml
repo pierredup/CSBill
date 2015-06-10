@@ -11,3 +11,5 @@ targets:
       
 before:
     - python --version
+    - ls -la /usr/bin
+    - ls -la /usr/local/bin
