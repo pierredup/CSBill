@@ -16,6 +16,7 @@ targets:
         - readline-devel
   
 before:
+  - cat /etc/ld.so.conf
   - ldconfig
   - ldconfig -p
 #  debian-7:
