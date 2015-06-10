@@ -5,12 +5,9 @@ targets:
     build_dependencies:
       - readline
       - readline-devel
-      - python-pip
-      - python-setuptools
-      - python-bob-builder
     dependencies:
       - mysql
       - php-twig-ctwig
-
-after:
-    - cat /home/pkgr/.pip/pip.log
+      
+before:
+    - python --version
