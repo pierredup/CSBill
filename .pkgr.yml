@@ -1,25 +1,29 @@
-buildpack: https://github.com/pierredup/heroku-buildpack-php
+# https://packager.io/documentation/customizing-the-build/
+
+name: blah
+user: "apache"
+group: "apache"
+buildpack: https://github.com/heroku/heroku-buildpack-php.git#master
+env:
+  - STACK=cedar
 
 targets:
   centos-7:
     build_dependencies:
       - readline
       - readline-devel
-      - xz-libs
     dependencies:
       - mysql
       - php-twig-ctwig
-      
-before:
-  - wget http://www.python.org/ftp/python/2.7.6/Python-2.7.6.tar.xz
-  - xz -d Python-2.7.6.tar.xz
-  - tar -xvf Python-2.7.6.tar
-  - cd Python-2.7.6
-  - ./configure --prefix=./
-  - make
-  - make altinstall
-  - ls -la
-  - alias python=/usr/local/bin/python2.7
-  - python --version
+#  debian-7:
+#    - libreadline5
+#    - libreadline-dev
+#  ubuntu-14.04:
+#    - libreadline5
+#    - libreadline-dev
 
+# turn off emails for now
 notifications: false
+
+# Build and protect (this is before distribution)
+# https://packager.io/documentation/customizing-the-build/#before\
