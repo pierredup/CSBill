@@ -1,1 +1,10 @@
 buildpack: https://github.com/heroku/heroku-buildpack-php
+
+targets:
+  centos-6:
+    build_dependencies:
+      - readline
+      - readline-devel
+    dependencies:
+      - mysql
+      - php-twig-ctwig
