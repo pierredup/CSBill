@@ -3,7 +3,6 @@ buildpack: https://github.com/pierredup/heroku-buildpack-php
 targets:
   centos-6:
     build_dependencies:
-      - python2.7
       - readline
       - readline-devel
     dependencies:
