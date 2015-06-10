@@ -12,9 +12,9 @@ targets:
       - php-twig-ctwig
 
 before:
-    - pip install boto
-    - pip install docopt
-    - pip install envoy
+    - sudo pip install boto
+    - sudo pip install docopt
+    - sudo pip install envoy
 
 after:
     - cat /home/pkgr/.pip/pip.log
