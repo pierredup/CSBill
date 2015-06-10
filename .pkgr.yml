@@ -3,7 +3,7 @@
 name: blah
 user: "apache"
 group: "apache"
-buildpack: https://github.com/heroku/heroku-buildpack-php.git#master
+buildpack: https://github.com/CHH/heroku-buildpack-php
   
 dependencies:
   - readline
