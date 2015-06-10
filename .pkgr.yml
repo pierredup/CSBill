@@ -15,3 +15,6 @@ before:
     - pip install boto
     - pip install docopt
     - pip install envoy
+
+after:
+    - cat /home/pkgr/.pip/pip.log
