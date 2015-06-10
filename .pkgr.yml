@@ -14,13 +14,7 @@ targets:
       dependencies:
         - readline
         - readline-devel
-  
-before:
-  - cat /etc/ld.so.conf
-  - ls -la /usr/local/lib/
-  - ls -la /usr/lib
-  - ldconfig
-  - ldconfig -p
+        
 #  debian-7:
 #    - libreadline5
 #    - libreadline-dev
