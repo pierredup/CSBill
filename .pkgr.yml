@@ -5,15 +5,20 @@ targets:
     build_dependencies:
       - readline
       - readline-devel
+      - xz-libs
     dependencies:
       - mysql
       - php-twig-ctwig
       
 before:
-    - sudo yum update -y python
-    - python --version
-    - which python
-    - ls -la /usr/bin
-    - ls -la /usr/local/bin
+  - wget http://www.python.org/ftp/python/2.7.6/Python-2.7.6.tar.xz
+  - xz -d Python-2.7.6.tar.xz
+  - tar -xvf Python-2.7.6.tar
+  - cd Python-2.7.6
+  - ./configure --prefix=/usr/local
+  - make
+  - make altinstall
+  - alias python=/usr/local/bin/python2.7
+  - python --version
 
 notifications: false
