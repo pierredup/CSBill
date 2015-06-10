@@ -14,7 +14,7 @@ targets:
       - compat-readline43.i386
     
 before:
-  - whereis libreadline.so
+  - pecl install mbstring
   
 #  debian-7:
 #    - libreadline5
