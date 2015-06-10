@@ -4,14 +4,16 @@ name: blah
 user: "apache"
 group: "apache"
 buildpack: https://github.com/heroku/heroku-buildpack-php.git#master
-env:
-  - STACK=cedar
-  - LD_LIBRARY_PATH=/app/php/ext
+  
+dependencies:
+  - readline
+  - readline-devel
   
 targets:
     centos-7:
-    build_depenecies:
-      - compat-readline43.i386
+      dependencies:
+        - readline
+        - readline-devel
     
 before:
   - pecl install mbstring
