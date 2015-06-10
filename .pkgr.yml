@@ -11,5 +11,6 @@ targets:
       
 before:
     - python --version
+    - which python
     - ls -la /usr/bin
     - ls -la /usr/local/bin
