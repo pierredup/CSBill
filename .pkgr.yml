@@ -14,9 +14,6 @@ targets:
       dependencies:
         - readline
         - readline-devel
-    
-before:
-  - pecl install mbstring
   
 #  debian-7:
 #    - libreadline5
