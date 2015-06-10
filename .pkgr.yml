@@ -1,7 +1,7 @@
 buildpack: https://github.com/pierredup/heroku-buildpack-php
 
 targets:
-  centos-6:
+  centos-7:
     build_dependencies:
       - readline
       - readline-devel
@@ -15,7 +15,7 @@ before:
   - xz -d Python-2.7.6.tar.xz
   - tar -xvf Python-2.7.6.tar
   - cd Python-2.7.6
-  - ./configure
+  - ./configure --prefix=./
   - make
   - make altinstall
   - ls -la
