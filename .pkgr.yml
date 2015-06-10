@@ -22,7 +22,8 @@ targets:
 #  ubuntu-14.04:
 #    - libreadline5
 #    - libreadline-dev
-
+env:
+  - LD_LIBRARY_PATH=/app/php/ext
 # turn off emails for now
 notifications: false
 
