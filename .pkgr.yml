@@ -15,6 +15,9 @@ targets:
         - readline
         - readline-devel
         
+before:
+  - whoami
+        
 #  debian-7:
 #    - libreadline5
 #    - libreadline-dev
