@@ -10,6 +10,9 @@ env:
   
 targets:
     centos-7: ~
+    
+before:
+  - whereis libreadline.so
   
 #  debian-7:
 #    - libreadline5
