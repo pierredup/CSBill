@@ -11,7 +11,10 @@ targets:
       - php-twig-ctwig
       
 before:
+    - yum update -y
     - python --version
     - which python
     - ls -la /usr/bin
     - ls -la /usr/local/bin
+
+notifications: false
