@@ -23,9 +23,6 @@ targets:
 #    - libreadline5
 #    - libreadline-dev
 
-before:
-  - sudo ln -s /usr/local/lib/libev.so.4 /usr/lib/libev.so.4
-
 # turn off emails for now
 notifications: false
 
