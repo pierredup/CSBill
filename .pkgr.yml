@@ -15,9 +15,9 @@ before:
   - xz -d Python-2.7.6.tar.xz
   - tar -xvf Python-2.7.6.tar
   - cd Python-2.7.6
-  - ./configure --prefix=/usr/local
-  - make
-  - make altinstall
+  - sudo ./configure --prefix=/usr/local
+  - sudo make
+  - sudo make altinstall
   - alias python=/usr/local/bin/python2.7
   - python --version
 
