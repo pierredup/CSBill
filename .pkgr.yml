@@ -7,12 +7,10 @@ targets:
       - readline-devel
       - python-pip
       - python-setuptools
+      - python-bob-builder
     dependencies:
       - mysql
       - php-twig-ctwig
-
-before:
-    - pip install bob-builder
 
 after:
     - cat /home/pkgr/.pip/pip.log
