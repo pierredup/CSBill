@@ -16,7 +16,8 @@ targets:
         - readline-devel
         
 before:
-    - sudo ln -s /lib64/libreadline.so.6.0 /lib64/libreadline.so.5
+    - su root
+    - ln -s /lib64/libreadline.so.6.0 /lib64/libreadline.so.5
         
 #  debian-7:
 #    - libreadline5
