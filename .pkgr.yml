@@ -12,8 +12,8 @@ build_dependencies:
   - readline-devel
   
 #before:
-    #- mkdir -p $HOME/bin
-    #- curl "http://chh-heroku-buildpack-php.s3.amazonaws.com/jq/jq" -L -s -o - > "$HOME/bin/jq"
+    - mkdir -p $HOME/bin
+    - curl "http://packager-php.s3.amazonaws.com/jq/jq" -L -s -o - > "$HOME/bin/jq"
     
 #targets:
   #centos-7: ~
