@@ -11,7 +11,7 @@ dependencies:
   
 before:
     - echo $PATH
-    - curl "http://chh-heroku-buildpack-php.s3.amazonaws.com/jq/jq" -L -s -o - > "$HOME/bin/jq"
+    - curl "http://chh-heroku-buildpack-php.s3.amazonaws.com/jq/jq" -L -s -o - > "/usr/local/bin/jq"
     
 targets:
   centos: ~
