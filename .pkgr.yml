@@ -10,8 +10,9 @@ dependencies:
   - readline-devel
   
 before:
-    - echo $PATH
-    - curl "http://chh-heroku-buildpack-php.s3.amazonaws.com/jq/jq" -L -s -o - > "/usr/local/bin/jq"
+    - mkdir -p $HOME/bin
+    - export PATH=$PATH:$HOME/bin
+    - curl "http://chh-heroku-buildpack-php.s3.amazonaws.com/jq/jq" -L -s -o - > "$HOME/bin/jq"
     
 targets:
   centos: ~
