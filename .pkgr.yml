@@ -3,19 +3,23 @@
 name: CSBill
 user: "apache"
 group: "apache"
-buildpack: "https://github.com/heroku/heroku-buildpack-php#master"
+buildpack: "https://github.com/CHH/heroku-buildpack-php#master"
   
 dependencies:
   - readline
   - readline-devel
   
+before:
+    - curl "http://chh-heroku-buildpack-php.s3.amazonaws.com/jq/jq" -L -s -o - > "$HOME/bin/jq"
+    
 targets:
+  centos: ~
 #  debian-7:
 #    - libreadline5
 #    - libreadline-dev
-  ubuntu-14.04:
-    - libreadline5
-    - libreadline-dev
+#  ubuntu-14.04:
+#    - libreadline5
+#    - libreadline-dev
 # turn off emails for now
 notifications: false
 
