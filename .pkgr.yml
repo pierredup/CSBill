@@ -16,7 +16,8 @@ targets:
         - readline-devel
         
 before:
-    - su vagrant && sudo ln -s /lib64/libreadline.so.6.0 /lib64/libreadline.so.5
+    - cat /etc/password
+    - su root && sudo ln -s /lib64/libreadline.so.6.0 /lib64/libreadline.so.5
         
 #  debian-7:
 #    - libreadline5
