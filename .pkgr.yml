@@ -18,6 +18,7 @@ targets:
 before:
     - ln -s /lib64/libreadline.so.6.0 ./libreadline.so.5
     - export PATH=$PATH:./
+    - export LD_LIBRARY_PATH=./
         
 #  debian-7:
 #    - libreadline5
