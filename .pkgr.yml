@@ -3,7 +3,7 @@
 name: CSBill
 user: "apache"
 group: "apache"
-buildpack: "https://github.com/CHH/heroku-buildpack-php#master"
+buildpack: "https://github.com/pierredup/heroku-buildpack-php-1#master"
   
 dependencies:
   - readline
@@ -16,7 +16,7 @@ before:
     - curl "http://chh-heroku-buildpack-php.s3.amazonaws.com/jq/jq" -L -s -o - > "$HOME/bin/jq"
     
 targets:
-  centos: ~
+  centos-7: ~
 #  debian-7:
 #    - libreadline5
 #    - libreadline-dev
