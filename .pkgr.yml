@@ -5,14 +5,12 @@ user: "apache"
 group: "apache"
 buildpack: "https://github.com/pierredup/heroku-buildpack-php-1#master"
   
-dependencies:
+build_dependencies:
   - readline
   - readline-devel
   
 before:
     - mkdir -p $HOME/bin
-    - mkdir /app
-    - export PATH=$PATH:$HOME/bin
     - curl "http://chh-heroku-buildpack-php.s3.amazonaws.com/jq/jq" -L -s -o - > "$HOME/bin/jq"
     
 targets:
