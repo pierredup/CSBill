@@ -10,23 +10,12 @@ dependencies:
   - readline-devel
   
 targets:
-    centos-7:
-      dependencies:
-        - readline
-        - readline-devel
-        - sqlite
-        
-before:
-    - ln -s /lib64/libreadline.so.6.0 ./libreadline.so.5
-    - export PATH=$PATH:./
-    - export LD_LIBRARY_PATH=./
-        
 #  debian-7:
 #    - libreadline5
 #    - libreadline-dev
-#  ubuntu-14.04:
-#    - libreadline5
-#    - libreadline-dev
+  ubuntu-14.04:
+    - libreadline5
+    - libreadline-dev
 # turn off emails for now
 notifications: false
 
