@@ -3,7 +3,7 @@
 name: CSBill
 user: "apache"
 group: "apache"
-buildpack: "https://github.com/pierredup/heroku-buildpack-php-1#master"
+buildpack: "https://github.com/pierredup/heroku-buildpack-php#master"
   
 build_dependencies:
   - readline
