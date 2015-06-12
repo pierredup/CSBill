@@ -6,6 +6,8 @@ group: "apache"
 buildpack: "https://github.com/pierredup/heroku-buildpack-php#master"
   
 build_dependencies:
+  - libmcrypt
+  - libmcrypt-devel
   - readline
   - readline-devel
   
