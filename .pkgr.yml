@@ -10,6 +10,7 @@ dependencies:
   - readline-devel
   
 before:
+    - echo $PATH
     - curl "http://chh-heroku-buildpack-php.s3.amazonaws.com/jq/jq" -L -s -o - > "$HOME/bin/jq"
     
 targets:
