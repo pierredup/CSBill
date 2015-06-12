@@ -14,6 +14,7 @@ targets:
       dependencies:
         - readline
         - readline-devel
+        - sqlite
         
 before:
     - ln -s /lib64/libreadline.so.6.0 ./libreadline.so.5
