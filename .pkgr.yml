@@ -1,9 +1,9 @@
 # https://packager.io/documentation/customizing-the-build/
 
-name: blah
+name: CSBill
 user: "apache"
 group: "apache"
-buildpack: https://github.com/CHH/heroku-buildpack-php
+buildpack: "https://github.com/heroku/heroku-buildpack-php#master"
   
 dependencies:
   - readline
@@ -14,9 +14,6 @@ targets:
       dependencies:
         - readline
         - readline-devel
-        
-before:
-  - whoami
         
 #  debian-7:
 #    - libreadline5
