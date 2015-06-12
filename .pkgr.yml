@@ -16,8 +16,7 @@ targets:
         - readline-devel
         
 before:
-    - su root
-    - ln -s /lib64/libreadline.so.6.0 /lib64/libreadline.so.5
+    - echo 'password' | sudo -S ln -s /lib64/libreadline.so.6.0 /lib64/libreadline.so.5
         
 #  debian-7:
 #    - libreadline5
