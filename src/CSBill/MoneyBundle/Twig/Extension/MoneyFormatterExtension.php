@@ -43,7 +43,7 @@ class MoneyFormatterExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('currencyFormatter', function () {
+            new \Twig_SimpleFunction('currencyFormatter', function() {
                 return $this->formatter;
             }),
         ];

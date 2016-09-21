@@ -57,7 +57,7 @@ class BillingFormSubscriber implements EventSubscriberInterface
         $tax = new Money(0, $this->currency);
         $subTotal = new Money(0, $this->currency);
 
-        $object->getItems()->forAll(function ($_, ItemInterface $item) use (&$total, &$tax, &$subTotal) {
+        $object->getItems()->forAll(function($_, ItemInterface $item) use (&$total, &$tax, &$subTotal) {
             if (null === $item->getQty()) {
                 return false;
             }

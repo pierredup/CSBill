@@ -70,7 +70,7 @@ class ApiTokenManagerTest extends \PHPUnit_Framework_TestCase
         $token2 = new ApiToken();
         $token2->setName('token2');
 
-        $user->setApiTokens([$token1, $token2,]);
+        $user->setApiTokens([$token1, $token2, ]);
 
         $tm = new ApiTokenManager($registry);
 
@@ -92,7 +92,7 @@ class ApiTokenManagerTest extends \PHPUnit_Framework_TestCase
         $token2 = new ApiToken();
         $token2->setName('token2');
 
-        $user->setApiTokens([$token1, $token2,]);
+        $user->setApiTokens([$token1, $token2, ]);
 
         $manager = M::mock(ObjectManager::class);
 
