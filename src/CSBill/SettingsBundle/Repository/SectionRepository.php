@@ -30,7 +30,7 @@ class SectionRepository extends EntityRepository
     public function getTopLevelSections($cache = false, $cacheKey = 'csbill_settings_top_section_sections', $lifetime = 604800)
     {
         $qb = $this->createQueryBuilder('s')
-                   ->where('s.parent IS NULL');
+                    ->where('s.parent IS NULL');
 
         $query = $qb->getQuery();
 

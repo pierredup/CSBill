@@ -54,7 +54,7 @@ class PaymentFactories
 
         return array_filter(
             $this->factories,
-            function ($factory) use ($type) {
+            function($factory) use ($type) {
                 return $type === $factory;
             }
         );

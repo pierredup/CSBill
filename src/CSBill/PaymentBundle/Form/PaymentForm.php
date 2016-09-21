@@ -35,7 +35,7 @@ class PaymentForm extends AbstractType
             EntityType::class,
             [
                 'class' => 'CSBillPaymentBundle:PaymentMethod',
-                'query_builder' => function (PaymentMethodRepository $repository) use ($options) {
+                'query_builder' => function(PaymentMethodRepository $repository) use ($options) {
                     $queryBuilder = $repository->createQueryBuilder('pm');
                     $expression = $queryBuilder->expr();
                     $queryBuilder->where($expression->eq('pm.enabled', 1));
@@ -58,7 +58,7 @@ class PaymentForm extends AbstractType
                 'preferred_choices' => $options['preferred_choices'],
                 'constraints' => new Assert\NotBlank(),
                 'placeholder' => 'Choose Payment Method',
-                'choice_attr' => function (PaymentMethod $paymentMethod) {
+                'choice_attr' => function(PaymentMethod $paymentMethod) {
                     return ['data-gateway' => $paymentMethod->getGatewayName()];
                 },
                 'attr' => [
@@ -73,7 +73,7 @@ class PaymentForm extends AbstractType
             [
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Callback(function (Money $money, ExecutionContextInterface $context) {
+                    new Assert\Callback(function(Money $money, ExecutionContextInterface $context) {
                         if ($money->isZero() || $money->isNegative()) {
                             $context->buildViolation('This value should be greater than {{ compared_value }}.')
                                 ->setParameter('{{ value }}', $money->getAmount())

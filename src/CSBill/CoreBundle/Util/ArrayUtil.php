@@ -52,7 +52,7 @@ class ArrayUtil
             $return[] = $accessor->getValue($item, $column);
         }
 
-        return array_filter($return, function ($item) {
+        return array_filter($return, function($item) {
             return $item !== null;
         });
     }

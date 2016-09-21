@@ -52,7 +52,7 @@ class CreditController extends BaseController
      */
     public function creditAction(Request $request, Client $client)
     {
-        $jsonResponse = function (Credit $credit) use ($client) {
+        $jsonResponse = function(Credit $credit) use ($client) {
             return $this->json(
                 [
                     'credit' => $this->get('csbill.money.formatter')->toFloat($credit->getValue()),

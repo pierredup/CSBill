@@ -33,7 +33,7 @@ class TaxType extends AbstractType
 
         $types = Tax::getTypes();
 
-        array_walk($types, function (&$value) {
+        array_walk($types, function(&$value) {
             $value = ucwords($value);
         });
 

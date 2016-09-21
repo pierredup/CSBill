@@ -61,7 +61,7 @@ class InvoiceUsersSubscriber implements EventSubscriberInterface
                     'multiple' => true,
                     'expanded' => true,
                     'class' => 'CSBillClientBundle:Contact',
-                    'query_builder' => function (EntityRepository $repo) use ($clientId) {
+                    'query_builder' => function(EntityRepository $repo) use ($clientId) {
                         $qb = $repo->createQueryBuilder('c')
                             ->where('c.client = :client')
                             ->setParameter('client', $clientId);

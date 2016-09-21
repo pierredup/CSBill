@@ -114,7 +114,7 @@ class InvoiceType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'validation_groups' => function (FormInterface $form) {
+                'validation_groups' => function(FormInterface $form) {
                     $recurring = $form->get('recurring')->getData();
 
                     if (true === $recurring) {

@@ -116,7 +116,7 @@ class GridConfiguration implements ConfigurationInterface
             ->arrayNode('line_actions')
             ->prototype('array')
             ->validate()
-                ->ifTrue(function ($data) {
+                ->ifTrue(function($data) {
                     return empty($data['icon']) && empty($data['label']);
                 })
                 ->thenInvalid('At least one of "icon" or "label" needs to be set')
