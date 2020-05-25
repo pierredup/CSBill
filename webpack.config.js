@@ -7,7 +7,7 @@ Encore
     .setOutputPath('web/static/')
     .setPublicPath('/static')
 
-    .addEntry('core', './assets/js/core.js')
+    .addEntry('core', './assets/js/core.ts')
 
     .addStyleEntry('app', './assets/scss/app.scss')
     .addStyleEntry('email', './assets/scss/email.scss')
@@ -47,7 +47,9 @@ Encore
         ];
     })
 
-    .enableEslintLoader({
+    .enableTypeScriptLoader()
+
+    /*.enableEslintLoader({
         rules: {
             "lodash/import-scope": [2, "member"],
             "no-else-return": "error",
@@ -63,7 +65,7 @@ Encore
             "no-use-before-define": "error",
             "quotes": ["error", "single"]
         }
-    })
+    })*/
 ;
 
 const pagesDir = path.resolve(__dirname, 'assets/js/pages');

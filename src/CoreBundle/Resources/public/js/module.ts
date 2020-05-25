@@ -6,7 +6,7 @@ export default MnObject.extend({
     /**
      * @property {App} App
      */
-    app: null,
+    app: null as typeof Application,
 
     constructor (options, App) {
         if (!( App instanceof Application )) {
