@@ -17,11 +17,12 @@ import 'bootstrap';
 import 'select2';
 import 'jquery-placeholder';
 import 'regenerator-runtime/runtime';
+import Module from './module';
 
 const Application = MnApplication.extend({
-    module: null,
+    module: null as typeof Module,
     regions: {},
-    initialize (options) {
+    initialize: function (options) {
 
         this.regions = options.regions;
 
@@ -56,7 +57,8 @@ const Application = MnApplication.extend({
          */
         const vatInput = $('.vat-validator');
         if (vatInput.length) {
-            import('SolidInvoiceTax/js/vat_validator').then(({ default: VatNumberValidator }) => {
+            // @ts-ignore
+            import('SolidInvoiceTax/js/vat_validator').then(({default: VatNumberValidator}) => {
                 vatInput.each((i, el) => {
                     VatNumberValidator(el);
                 });
@@ -68,7 +70,8 @@ const Application = MnApplication.extend({
          */
         const cronInput = $('.cron-expr');
         if (cronInput.length) {
-            import('SolidInvoiceCore/js/util/form/cron').then(({ default: Cron }) => {
+            // @ts-ignore
+            import('SolidInvoiceCore/js/util/form/cron').then(({default: Cron}) => {
                 cronInput.each((i, el) => {
                     Cron(`#${el.id}`);
                 });
@@ -80,7 +83,8 @@ const Application = MnApplication.extend({
          */
         const grids = $('script[data-type="grid"]');
         if (grids.length) {
-            import('SolidInvoiceDataGrid/js/grid').then(({ default: Grid }) => {
+            // @ts-ignore
+            import('SolidInvoiceDataGrid/js/grid').then(({default: Grid}) => {
                 grids.each((i, el) => {
                     new Grid($(el).data('target'), JSON.parse(trim($(el).text())));
                 });
@@ -92,10 +96,11 @@ const Application = MnApplication.extend({
          */
         const multipleGrids = $('script[data-type="multiple_grid"]');
         if (multipleGrids.length) {
-            import('SolidInvoiceDataGrid/js/multiple_grid').then(({ default: MultipleGrid }) => {
+            // @ts-ignore
+            import('SolidInvoiceDataGrid/js/multiple_grid').then(({default: MultipleGrid}) => {
                 multipleGrids.each((i, el) => {
                     new MultipleGrid({
-                        'model': new Backbone.Model({ 'grids': JSON.parse(trim($(el).text())), 'gridId': $(el).data('target') }),
+                        'model': new Backbone.Model({'grids': JSON.parse(trim($(el).text())), 'gridId': $(el).data('target')}),
                         'el': $(el).data('target')
                     });
                 });
@@ -118,6 +123,7 @@ const Application = MnApplication.extend({
 
 export default function(module) {
     $(async () => {
+        // @ts-ignore
         const Config = ( await import(/* webpackMode: "eager" */ '~/config') ).default;
         const app = new Application({
             regions: module.prototype.regions

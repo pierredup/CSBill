@@ -8,11 +8,7 @@ export default MnObject.extend({
      */
     app: null as typeof Application,
 
-    constructor (options, App) {
-        if (!( App instanceof Application )) {
-            throw 'Module constructor needs an instance of Marionette.Application as the second argument';
-        }
-
+    constructor (options, App: Application) {
         this.app = App;
 
         MnObject.call(this, options);
