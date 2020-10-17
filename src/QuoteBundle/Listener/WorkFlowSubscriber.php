@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace SolidInvoice\QuoteBundle\Listener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use SolidInvoice\InvoiceBundle\Manager\InvoiceManager;
 use SolidInvoice\InvoiceBundle\Model\Graph as InvoiceGraph;
 use SolidInvoice\NotificationBundle\Notification\NotificationManager;
 use SolidInvoice\QuoteBundle\Entity\Quote;
 use SolidInvoice\QuoteBundle\Model\Graph as QuoteGraph;
 use SolidInvoice\QuoteBundle\Notification\QuoteStatusNotification;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\StateMachine;
@@ -67,7 +67,9 @@ class WorkFlowSubscriber implements EventSubscriberInterface
 
     public function onQuoteAccepted(Event $event)
     {
-        $invoice = $this->invoiceManager->createFromQuote($event->getSubject());
+        $quote = $event->getSubject();
+        assert($quote instanceof Quote);
+        $invoice = $this->invoiceManager->createFromQuote($quote);
 
         $this->invoiceStateMachine->apply($invoice, InvoiceGraph::TRANSITION_NEW);
     }
@@ -77,7 +79,7 @@ class WorkFlowSubscriber implements EventSubscriberInterface
         /** @var Quote $quote */
         $quote = $event->getSubject();
 
-        if (QuoteGraph::TRANSITION_ARCHIVE === $event->getTransition()->getName()) {
+        if (null !== ($transition = $event->getTransition()) && QuoteGraph::TRANSITION_ARCHIVE === $transition->getName()) {
             $quote->archive();
         }
 
@@ -86,6 +88,8 @@ class WorkFlowSubscriber implements EventSubscriberInterface
         $em->persist($quote);
         $em->flush();
 
-        $this->notification->sendNotification('quote_status_update', new QuoteStatusNotification(['quote' => $quote]));
+        if (QuoteGraph::STATUS_NEW !== $quote->getStatus()) {
+            $this->notification->sendNotification('quote_status_update', new QuoteStatusNotification(['quote' => $quote]));
+        }
     }
 }

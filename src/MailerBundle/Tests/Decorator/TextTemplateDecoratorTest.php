@@ -13,16 +13,17 @@ declare(strict_types=1);
 
 namespace SolidInvoice\MailerBundle\Tests\Decorator;
 
-use Mockery as M;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery as M;
 use PHPUnit\Framework\TestCase;
 use SolidInvoice\MailerBundle\Context;
 use SolidInvoice\MailerBundle\Decorator\TextTemplateDecorator;
 use SolidInvoice\MailerBundle\Event\MessageEvent;
-use SolidInvoice\MailerBundle\Template\TextTemplateMessage;
 use SolidInvoice\MailerBundle\Template\Template;
+use SolidInvoice\MailerBundle\Template\TextTemplateMessage;
 use SolidInvoice\SettingsBundle\SystemConfig;
-use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
+use Twig\Loader\ArrayLoader;
 
 class TextTemplateDecoratorTest extends TestCase
 {
@@ -31,7 +32,7 @@ class TextTemplateDecoratorTest extends TestCase
     public function testShouldDecorateWithStandardMessage()
     {
         $config = M::mock(SystemConfig::class);
-        $decorator = new TextTemplateDecorator($config, M::mock(EngineInterface::class));
+        $decorator = new TextTemplateDecorator($config, new Environment(new ArrayLoader()));
 
         $this->assertFalse($decorator->shouldDecorate(new MessageEvent(new \Swift_Message(), Context::create())));
     }
@@ -43,11 +44,12 @@ class TextTemplateDecoratorTest extends TestCase
             ->with('email/format')
             ->andReturn('html');
 
-        $decorator = new TextTemplateDecorator($config, M::mock(EngineInterface::class));
+        $decorator = new TextTemplateDecorator($config, new Environment(new ArrayLoader()));
 
         $this->assertFalse($decorator->shouldDecorate(new MessageEvent(new class() extends \Swift_Message implements TextTemplateMessage {
             public function getTextTemplate(): Template
             {
+                return new Template('');
             }
         }, Context::create())));
     }
@@ -59,11 +61,12 @@ class TextTemplateDecoratorTest extends TestCase
             ->with('email/format')
             ->andReturn('text');
 
-        $decorator = new TextTemplateDecorator($config, M::mock(EngineInterface::class));
+        $decorator = new TextTemplateDecorator($config, new Environment(new ArrayLoader()));
 
         $this->assertTrue($decorator->shouldDecorate(new MessageEvent(new class() extends \Swift_Message implements TextTemplateMessage {
             public function getTextTemplate(): Template
             {
+                return new Template('');
             }
         }, Context::create())));
     }
@@ -75,11 +78,12 @@ class TextTemplateDecoratorTest extends TestCase
             ->with('email/format')
             ->andReturn('both');
 
-        $decorator = new TextTemplateDecorator($config, M::mock(EngineInterface::class));
+        $decorator = new TextTemplateDecorator($config, new Environment(new ArrayLoader()));
 
         $this->assertTrue($decorator->shouldDecorate(new MessageEvent(new class() extends \Swift_Message implements TextTemplateMessage {
             public function getTextTemplate(): Template
             {
+                return new Template('');
             }
         }, Context::create())));
     }
@@ -91,13 +95,9 @@ class TextTemplateDecoratorTest extends TestCase
             ->with('email/format')
             ->andReturn('text');
 
-        $engine = M::mock(EngineInterface::class);
-        $engine->shouldReceive('render')
-            ->once()
-            ->with('@SolidInvoice/email.txt.twig', ['a' => 'b', 'c' => 'd'])
-            ->andReturn('Text Template');
+        $twig = new Environment(new ArrayLoader(['@SolidInvoice/email.txt.twig' => 'Text Template']));
 
-        $decorator = new TextTemplateDecorator($config, $engine);
+        $decorator = new TextTemplateDecorator($config, $twig);
 
         $message = new class() extends \Swift_Message implements TextTemplateMessage {
             public function getTextTemplate(): Template
@@ -118,13 +118,9 @@ class TextTemplateDecoratorTest extends TestCase
             ->with('email/format')
             ->andReturn('both');
 
-        $engine = M::mock(EngineInterface::class);
-        $engine->shouldReceive('render')
-            ->once()
-            ->with('@SolidInvoice/email.txt.twig', ['a' => 'b', 'c' => 'd'])
-            ->andReturn('Text Template');
+        $twig = new Environment(new ArrayLoader(['@SolidInvoice/email.txt.twig' => 'Text Template']));
 
-        $decorator = new TextTemplateDecorator($config, $engine);
+        $decorator = new TextTemplateDecorator($config, $twig);
 
         $message = new class() extends \Swift_Message implements TextTemplateMessage {
             public function getTextTemplate(): Template

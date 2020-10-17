@@ -13,11 +13,11 @@ declare(strict_types=1);
 
 namespace SolidInvoice\ApiBundle\Tests\Serializer\Normalizer;
 
-use SolidInvoice\ApiBundle\Serializer\Normalizer\MoneyNormalizer;
-use SolidInvoice\MoneyBundle\Formatter\MoneyFormatter;
 use Money\Currency;
 use Money\Money;
 use PHPUnit\Framework\TestCase;
+use SolidInvoice\ApiBundle\Serializer\Normalizer\MoneyNormalizer;
+use SolidInvoice\MoneyBundle\Formatter\MoneyFormatter;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -28,18 +28,22 @@ class MoneyNormalizerTest extends TestCase
         $parentNormalizer = new class() implements NormalizerInterface, DenormalizerInterface {
             public function normalize($object, $format = null, array $context = [])
             {
+                return $object;
             }
 
             public function supportsNormalization($data, $format = null)
             {
+                return true;
             }
 
             public function supportsDenormalization($data, $type, $format = null)
             {
+                return true;
             }
 
             public function denormalize($data, $class, $format = null, array $context = [])
             {
+                return $data;
             }
         };
 
@@ -55,18 +59,22 @@ class MoneyNormalizerTest extends TestCase
         $parentNormalizer = new class() implements NormalizerInterface, DenormalizerInterface {
             public function normalize($object, $format = null, array $context = [])
             {
+                return $object;
             }
 
             public function supportsNormalization($data, $format = null)
             {
+                return true;
             }
 
             public function supportsDenormalization($data, $type, $format = null)
             {
+                return true;
             }
 
             public function denormalize($data, $class, $format = null, array $context = [])
             {
+                return $data;
             }
         };
 
@@ -82,18 +90,22 @@ class MoneyNormalizerTest extends TestCase
         $parentNormalizer = new class() implements NormalizerInterface, DenormalizerInterface {
             public function normalize($object, $format = null, array $context = [])
             {
+                return $object;
             }
 
             public function supportsNormalization($data, $format = null)
             {
+                return true;
             }
 
             public function supportsDenormalization($data, $type, $format = null)
             {
+                return true;
             }
 
             public function denormalize($data, $class, $format = null, array $context = [])
             {
+                return $data;
             }
         };
 
@@ -110,18 +122,22 @@ class MoneyNormalizerTest extends TestCase
         $parentNormalizer = new class() implements NormalizerInterface, DenormalizerInterface {
             public function normalize($object, $format = null, array $context = [])
             {
+                return $object;
             }
 
             public function supportsNormalization($data, $format = null)
             {
+                return true;
             }
 
             public function supportsDenormalization($data, $type, $format = null)
             {
+                return true;
             }
 
             public function denormalize($data, $class, $format = null, array $context = [])
             {
+                return $data;
             }
         };
 

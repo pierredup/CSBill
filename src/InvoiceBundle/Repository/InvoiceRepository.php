@@ -14,27 +14,31 @@ declare(strict_types=1);
 namespace SolidInvoice\InvoiceBundle\Repository;
 
 use Carbon\Carbon;
-use SolidInvoice\ClientBundle\Entity\Client;
-use SolidInvoice\InvoiceBundle\Entity\Invoice;
-use SolidInvoice\InvoiceBundle\Entity\Item;
-use SolidInvoice\InvoiceBundle\Model\Graph;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Money\Money;
+use SolidInvoice\ClientBundle\Entity\Client;
+use SolidInvoice\InvoiceBundle\Entity\Invoice;
+use SolidInvoice\InvoiceBundle\Entity\Item;
+use SolidInvoice\InvoiceBundle\Model\Graph;
 use SolidInvoice\PaymentBundle\Entity\Payment;
 
-class InvoiceRepository extends EntityRepository
+class InvoiceRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Invoice::class);
+    }
+
     /**
      * Get the total amount for paid invoices.
      *
      * @param Client $client set this parameter to filter per client
      *
      * @deprecated This function is deprecated, and the one in PaymentRepository should be used instead
-     *
-     * @return int
      */
     public function getTotalIncome(Client $client = null): int
     {
@@ -52,8 +56,6 @@ class InvoiceRepository extends EntityRepository
      * @param string $status
      * @param Client $client  filter per client
      * @param int    $hydrate
-     *
-     * @return int
      *
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
@@ -80,8 +82,6 @@ class InvoiceRepository extends EntityRepository
      * Get the total amount for outstanding invoices.
      *
      * @param Client $client set this parameter to filter per client
-     *
-     * @return int
      */
     public function getTotalOutstanding(Client $client = null): int
     {
@@ -106,8 +106,6 @@ class InvoiceRepository extends EntityRepository
      *
      * @param string|array $status
      * @param Client       $client set this parameter to filter per client
-     *
-     * @return int
      */
     public function getCountByStatus($status, Client $client = null): int
     {
@@ -138,8 +136,6 @@ class InvoiceRepository extends EntityRepository
      * Gets the most recent created invoices.
      *
      * @param int $limit
-     *
-     * @return array
      */
     public function getRecentInvoices($limit = 5): array
     {
@@ -172,11 +168,6 @@ class InvoiceRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    /**
-     * @param array $parameters
-     *
-     * @return QueryBuilder
-     */
     public function getGridQuery(array $parameters = []): QueryBuilder
     {
         $qb = $this->createQueryBuilder('i');
@@ -193,11 +184,6 @@ class InvoiceRepository extends EntityRepository
         return $qb;
     }
 
-    /**
-     * @param array $parameters
-     *
-     * @return QueryBuilder
-     */
     public function getRecurringGridQuery(array $parameters = []): QueryBuilder
     {
         $qb = $this->createQueryBuilder('i');
@@ -214,9 +200,6 @@ class InvoiceRepository extends EntityRepository
         return $qb;
     }
 
-    /**
-     * @return QueryBuilder
-     */
     public function getArchivedGridQuery(): QueryBuilder
     {
         $this->getEntityManager()->getFilters()->disable('archivable');
@@ -230,9 +213,6 @@ class InvoiceRepository extends EntityRepository
         return $qb;
     }
 
-    /**
-     * @param Client $client
-     */
     public function updateCurrency(Client $client)
     {
         $filters = $this->getEntityManager()->getFilters();
@@ -276,9 +256,6 @@ class InvoiceRepository extends EntityRepository
         $filters->enable('archivable');
     }
 
-    /**
-     * @param array $ids
-     */
     public function deleteInvoices(array $ids): void
     {
         $filters = $this->getEntityManager()->getFilters();
@@ -298,10 +275,6 @@ class InvoiceRepository extends EntityRepository
 
     /**
      * Checks if an invoice is paid in full.
-     *
-     * @param Invoice $invoice
-     *
-     * @return bool
      */
     public function isFullyPaid(Invoice $invoice): bool
     {

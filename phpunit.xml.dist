@@ -10,7 +10,7 @@
         convertWarningsToExceptions="false"
         processIsolation="false"
         stopOnFailure="false"
-        bootstrap="app/autoload.php">
+        bootstrap="tests/bootstrap.php">
 
     <testsuites>
         <testsuite name="SolidInvoice Test Suite">
@@ -23,20 +23,25 @@
         <server name="KERNEL_DIR" value="app"/>
         <server name="SOLIDINVOICE_ENV" value="test"/>
         <server name="SOLIDINVOICE_DEBUG" value="0"/>
+        <server name="APP_ENV" value="test"/>
+        <server name="APP_DEBUG" value="0"/>
+        <server name="SYMFONY_DEPRECATIONS_HELPER" value="300"/>
+        <server name="PANTHER_NO_HEADLESS" value="0" />
     </php>
 
     <listeners>
         <listener class="Mockery\Adapter\Phpunit\TestListener"/>
-        <listener class="SolidInvoice\CoreBundle\Test\Listener\DoctrineSetupListener"/>
         <listener class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitListener"/>
     </listeners>
+
+    <extensions>
+        <extension class="Symfony\Component\Panther\ServerExtension"/>
+    </extensions>
 
     <filter>
         <whitelist>
             <directory>src</directory>
             <exclude>
-                <directory>src/*Bundle/Behat</directory>
-                <directory>src/*Bundle/Action</directory>
                 <directory>src/*Bundle/Resources</directory>
                 <directory>src/*Bundle/Tests</directory>
             </exclude>

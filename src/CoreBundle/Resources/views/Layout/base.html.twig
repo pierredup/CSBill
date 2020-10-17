@@ -6,6 +6,7 @@
  # This source file is subject to the MIT license that is bundled
  # with this source code in the file LICENSE.
  #}
+
 {% set locale = app.request.locale|split('_')[0] %}
 
 <!DOCTYPE html>
@@ -25,28 +26,40 @@
     <meta name="theme-color" content="#1E88E7">
 
     {% block stylesheets %}
-	    <link rel="stylesheet" href="{{ asset('css/app.css') }}" type="text/css" />
+        {{ encore_entry_link_tags('app') }}
+
+        {% if module is defined %}
+            {{ encore_entry_link_tags(module) }}
+        {% endif %}
     {% endblock stylesheets %}
 
     {% include '@SolidInvoiceCore/_partials/scripts.html.twig' %}
 
 </head>
-<body class="{{ setting('design/system/theme')|default('skin-solidinvoice-default') }} sidebar-mini {{ body_class|default('') }}">
+<body class="{{ setting('design/system/theme')|default('skin-solidinvoice-default') }} sidebar-mini hold-transition {{ body_class|default('') }}">
     <div class="wrapper">
         {{ block('body_top') is defined ? block('body_top') }}
         <!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
 
-        <header class="main-header">
-            {{ block('header') is defined ? block('header') }}
-        </header>
+        {% if block('header') is defined %}
+            <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+                {{ block('header') }}
+            </nav>
+        {% endif %}
 
-        <div class="content-wrapper">
-            {{ block('body') is defined ? block('body') }}
-        </div>
+        {{ block('body') is defined ? block('body') }}
 
-        <footer class="main-footer">
-            {{ block('footer') is defined ? block('footer') }}
-        </footer>
+        {% if block('footer') is defined %}
+            <footer class="main-footer">
+                {{ block('footer') }}
+            </footer>
+        {% endif %}
+
+        {% if module is defined %}
+            {{ encore_entry_script_tags(module) }}
+        {% else %}
+            {{ encore_entry_script_tags('core') }}
+        {% endif %}
 
         {{ block('scripts') is defined ? block('scripts') }}
 
@@ -54,3 +67,4 @@
     </div>
 </body>
 </html>
+

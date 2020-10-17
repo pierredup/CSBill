@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace SolidInvoice\QuoteBundle\Tests\Cloner;
 
+use Money\Currency;
+use Money\Money;
+use PHPUnit\Framework\TestCase;
 use SolidInvoice\ClientBundle\Entity\Client;
 use SolidInvoice\CoreBundle\Entity\Discount;
 use SolidInvoice\QuoteBundle\Cloner\QuoteCloner;
@@ -20,12 +23,9 @@ use SolidInvoice\QuoteBundle\Entity\Item;
 use SolidInvoice\QuoteBundle\Entity\Quote;
 use SolidInvoice\QuoteBundle\Model\Graph;
 use SolidInvoice\TaxBundle\Entity\Tax;
-use Money\Currency;
-use Money\Money;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Workflow\Definition;
-use Symfony\Component\Workflow\MarkingStore\SingleStateMarkingStore;
+use Symfony\Component\Workflow\MarkingStore\MethodMarkingStore;
 use Symfony\Component\Workflow\StateMachine;
 use Symfony\Component\Workflow\Transition;
 
@@ -72,7 +72,7 @@ class QuoteClonerTest extends TestCase
                 ['new', 'draft'],
                 [new Transition('new', 'new', 'draft')]
             ),
-            new SingleStateMarkingStore('status'),
+            new MethodMarkingStore(true, 'status'),
             $dispatcher,
             'quote'
         );

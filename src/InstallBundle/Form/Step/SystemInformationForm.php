@@ -20,16 +20,12 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Intl\Intl;
+use Symfony\Component\Intl\Locales;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints;
 
 class SystemInformationForm extends AbstractType
 {
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (extension_loaded('intl')) {
@@ -37,7 +33,7 @@ class SystemInformationForm extends AbstractType
                 'locale',
                 Select2Type::class,
                 [
-                    'choices' => array_flip(Intl::getLocaleBundle()->getLocaleNames()),
+                    'choices' => array_flip(Locales::getNames()),
                     'constraints' => new Constraints\NotBlank(['message' => 'Please select a locale']),
                     'placeholder' => 'Please select a locale',
                 ]
@@ -63,14 +59,6 @@ class SystemInformationForm extends AbstractType
             [
                 'constraints' => new Constraints\NotBlank(['message' => 'Please select a currency']),
                 'placeholder' => 'Please select a currency',
-            ]
-        );
-
-        $builder->add(
-            'base_url',
-            null,
-            [
-                'constraints' => new Constraints\NotBlank(['message' => 'Please set the application base url']),
             ]
         );
 

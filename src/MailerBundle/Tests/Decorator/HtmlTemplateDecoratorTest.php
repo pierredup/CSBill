@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace SolidInvoice\MailerBundle\Tests\Decorator;
 
-use Mockery as M;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery as M;
 use PHPUnit\Framework\TestCase;
 use SolidInvoice\MailerBundle\Context;
 use SolidInvoice\MailerBundle\Decorator\HtmlTemplateDecorator;
@@ -22,7 +22,8 @@ use SolidInvoice\MailerBundle\Event\MessageEvent;
 use SolidInvoice\MailerBundle\Template\HtmlTemplateMessage;
 use SolidInvoice\MailerBundle\Template\Template;
 use SolidInvoice\SettingsBundle\SystemConfig;
-use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
+use Twig\Loader\ArrayLoader;
 
 class HtmlTemplateDecoratorTest extends TestCase
 {
@@ -31,7 +32,7 @@ class HtmlTemplateDecoratorTest extends TestCase
     public function testShouldDecorateWithStandardMessage()
     {
         $config = M::mock(SystemConfig::class);
-        $decorator = new HtmlTemplateDecorator($config, M::mock(EngineInterface::class));
+        $decorator = new HtmlTemplateDecorator($config, new Environment(new ArrayLoader()));
 
         $this->assertFalse($decorator->shouldDecorate(new MessageEvent(new \Swift_Message(), Context::create())));
     }
@@ -43,11 +44,12 @@ class HtmlTemplateDecoratorTest extends TestCase
             ->with('email/format')
             ->andReturn('text');
 
-        $decorator = new HtmlTemplateDecorator($config, M::mock(EngineInterface::class));
+        $decorator = new HtmlTemplateDecorator($config, new Environment(new ArrayLoader()));
 
         $this->assertFalse($decorator->shouldDecorate(new MessageEvent(new class() extends \Swift_Message implements HtmlTemplateMessage {
             public function getHtmlTemplate(): Template
             {
+                return new Template('');
             }
         }, Context::create())));
     }
@@ -59,11 +61,12 @@ class HtmlTemplateDecoratorTest extends TestCase
             ->with('email/format')
             ->andReturn('html');
 
-        $decorator = new HtmlTemplateDecorator($config, M::mock(EngineInterface::class));
+        $decorator = new HtmlTemplateDecorator($config, new Environment(new ArrayLoader()));
 
         $this->assertTrue($decorator->shouldDecorate(new MessageEvent(new class() extends \Swift_Message implements HtmlTemplateMessage {
             public function getHtmlTemplate(): Template
             {
+                return new Template('');
             }
         }, Context::create())));
     }
@@ -75,11 +78,12 @@ class HtmlTemplateDecoratorTest extends TestCase
             ->with('email/format')
             ->andReturn('both');
 
-        $decorator = new HtmlTemplateDecorator($config, M::mock(EngineInterface::class));
+        $decorator = new HtmlTemplateDecorator($config, new Environment(new ArrayLoader()));
 
         $this->assertTrue($decorator->shouldDecorate(new MessageEvent(new class() extends \Swift_Message implements HtmlTemplateMessage {
             public function getHtmlTemplate(): Template
             {
+                return new Template('');
             }
         }, Context::create())));
     }
@@ -91,13 +95,9 @@ class HtmlTemplateDecoratorTest extends TestCase
             ->with('email/format')
             ->andReturn('both');
 
-        $engine = M::mock(EngineInterface::class);
-        $engine->shouldReceive('render')
-            ->once()
-            ->with('@SolidInvoice/email.html.twig', ['a' => 'b', 'c' => 'd'])
-            ->andReturn('HTML Template');
+        $twig = new Environment(new ArrayLoader(['@SolidInvoice/email.html.twig' => 'HTML Template']));
 
-        $decorator = new HtmlTemplateDecorator($config, $engine);
+        $decorator = new HtmlTemplateDecorator($config, $twig);
 
         $message = new class() extends \Swift_Message implements HtmlTemplateMessage {
             public function getHtmlTemplate(): Template

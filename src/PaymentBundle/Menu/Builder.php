@@ -13,28 +13,18 @@ declare(strict_types=1);
 
 namespace SolidInvoice\PaymentBundle\Menu;
 
-use SolidInvoice\MenuBundle\Core\AuthenticatedMenu;
 use Knp\Menu\ItemInterface;
+use SolidInvoice\MenuBundle\Core\AuthenticatedMenu;
 
 class Builder extends AuthenticatedMenu
 {
     /**
      * Renders the top menu for payments.
-     *
-     * @param ItemInterface $menu
      */
     public function topMenu(ItemInterface $menu)
     {
+        $menu->addHeader('Payments');
         $menu->addChild(PaymentMenu::main());
-    }
-
-    /**
-     * Renders the top menu for payments.
-     *
-     * @param ItemInterface $menu
-     */
-    public function topRightMenu(ItemInterface $menu)
-    {
-        $menu['menu.top.system']->addChild(PaymentMenu::methods());
+        $menu->addChild(PaymentMenu::methods());
     }
 }

@@ -13,11 +13,17 @@ declare(strict_types=1);
 
 namespace SolidInvoice\CoreBundle\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use SolidInvoice\CoreBundle\Entity\Version;
-use Doctrine\ORM\EntityRepository;
 
-class VersionRepository extends EntityRepository
+class VersionRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Version::class);
+    }
+
     /**
      * Updates the current version.
      *
@@ -36,9 +42,6 @@ class VersionRepository extends EntityRepository
         $entityManager->flush();
     }
 
-    /**
-     * @return string
-     */
     public function getCurrentVersion(): string
     {
         $qb = $this->createQueryBuilder('v');

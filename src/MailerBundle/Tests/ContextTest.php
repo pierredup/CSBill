@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace SolidInvoice\MailerBundle\Tests;
 
-use SolidInvoice\MailerBundle\Context;
 use PHPUnit\Framework\TestCase;
+use SolidInvoice\MailerBundle\Context;
 
 class ContextTest extends TestCase
 {
@@ -40,9 +40,9 @@ class ContextTest extends TestCase
 
         $context['foo'] = 'bar';
 
-        $this->assertTrue(isset($context['foo']));
+        $this->assertArrayHasKey('foo', $context);
         $this->assertSame('bar', $context['foo']);
         unset($context['foo']);
-        $this->assertFalse(isset($context['foo']));
+        $this->assertArrayNotHasKey('foo', $context);
     }
 }

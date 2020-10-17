@@ -15,17 +15,17 @@ namespace SolidInvoice\DashboardBundle\Twig\Extension;
 
 use SolidInvoice\DashboardBundle\WidgetFactory;
 use SolidInvoice\DashboardBundle\Widgets\WidgetInterface;
+use Twig\Environment;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class WidgetExtension extends \Twig\Extension\AbstractExtension
+class WidgetExtension extends AbstractExtension
 {
     /**
      * @var WidgetFactory
      */
     private $widgetFactory;
 
-    /**
-     * @param WidgetFactory $widgetFactory
-     */
     public function __construct(WidgetFactory $widgetFactory)
     {
         $this->widgetFactory = $widgetFactory;
@@ -37,19 +37,14 @@ class WidgetExtension extends \Twig\Extension\AbstractExtension
     public function getFunctions()
     {
         return [
-            new \Twig\TwigFunction('render_dashboard_widget', [$this, 'renderDashboardWidget'], ['needs_environment' => true, 'is_safe' => ['html']]),
+            new TwigFunction('render_dashboard_widget', [$this, 'renderDashboardWidget'], ['needs_environment' => true, 'is_safe' => ['html']]),
         ];
     }
 
     /**
      * Renders a dashboard widget at a specific location.
-     *
-     * @param \Twig\Environment $environment
-     * @param string            $location
-     *
-     * @return string
      */
-    public function renderDashboardWidget(\Twig\Environment $environment, string $location): string
+    public function renderDashboardWidget(Environment $environment, string $location): string
     {
         /** @var WidgetInterface[] $widgets */
         $widgets = $this->widgetFactory->get($location);

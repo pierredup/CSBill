@@ -20,7 +20,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Table(name="app_config")
  * @ORM\Entity(repositoryClass="SolidInvoice\SettingsBundle\Repository\SettingsRepository")
- * @Gedmo\Loggable()
+ * @Gedmo\Loggable
  * @UniqueEntity(fields={"key"})
  */
 class Setting
@@ -72,8 +72,6 @@ class Setting
 
     /**
      * Get key.
-     *
-     * @return string
      */
     public function getKey(): string
     {
@@ -82,8 +80,6 @@ class Setting
 
     /**
      * Set key.
-     *
-     * @param string $key
      *
      * @return Setting
      */
@@ -155,8 +151,6 @@ class Setting
     /**
      * Set type.
      *
-     * @param string $type
-     *
      * @return Setting
      */
     public function setType(string $type): self
@@ -166,8 +160,8 @@ class Setting
         return $this;
     }
 
-    public function __toString(): ?string
+    public function __toString(): string
     {
-        return $this->value;
+        return (string) $this->value;
     }
 }

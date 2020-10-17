@@ -24,47 +24,28 @@ class Builder extends AuthenticatedMenu
     /**
      * Build the user menu.
      *
-     * @param ItemInterface $menu
-     *
      * @throws \InvalidArgumentException
      * @throws ServiceCircularReferenceException
      * @throws ServiceNotFoundException
      */
     public function userMenu(ItemInterface $menu)
     {
-        /** @var User $user */
-        $user = $this->container->get('security.token_storage')->getToken()->getUser();
-
-        $userMenu = $menu->addChild(MainMenu::user($user));
-
-        $userMenu->setAttributes(['class' => 'dropdown']);
-        $userMenu->setLinkAttributes(['class' => 'dropdown-toggle', 'data-toggle' => 'dropdown']);
-
-        $userMenu->addChild(MainMenu::profile());
-        $userMenu->addChild(MainMenu::api());
-        $userMenu->addDivider();
-        $userMenu->addChild(MainMenu::logout());
-
-        $userMenu->setChildrenAttributes(['class' => 'dropdown-menu']);
+        $menu->addDivider();
+        $menu->addChild(MainMenu::logout());
     }
 
     /**
      * Build the system menu.
      *
-     * @param ItemInterface $menu
-     *
      * @throws \InvalidArgumentException
      */
     public function systemMenu(ItemInterface $menu)
     {
-        $system = $menu->addChild(MainMenu::system());
-
-        $system->setAttributes(['class' => 'dropdown']);
-        $system->setLinkAttributes(['class' => 'dropdown-toggle', 'data-toggle' => 'dropdown']);
-        $system->addChild(MainMenu::settings());
-
-        $system->addChild(MainMenu::tax());
-        $system->addChild(MainMenu::users());
-        $system->setChildrenAttributes(['class' => 'dropdown-menu']);
+        $menu->addDivider();
+        $menu->addHeader('System');
+        $menu->addChild(MainMenu::tax());
+        $menu->addChild(MainMenu::users());
+        $menu->addChild(MainMenu::settings());
+        $menu->addChild(MainMenu::api());
     }
 }

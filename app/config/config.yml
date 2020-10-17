@@ -3,13 +3,15 @@ imports:
     - { resource: security.yml }
     - { resource: payum.yml }
     - { resource: workflow.yml }
-    - { resource: assetVersion.php }
+
+parameters:
+    container.dumper.inline_class_loader: true
 
 framework:
     esi: null
     translator:
         fallback: en
-    secret: '%secret%'
+    secret: '%env(secret)%'
     router:
         resource: '%kernel.root_dir%/config/routing.yml'
         strict_requirements: null
@@ -18,25 +20,27 @@ framework:
     validation:
         enabled: true
         enable_annotations: true
-        strict_email: true
-    default_locale: '%locale%'
+        email_validation_mode: html5
+    default_locale: '%env(locale)%'
     session:
         name: SOLIDINVOICE_APP
     fragments: null
     http_method_override: true
     serializer: { enable_annotations: true }
+    assets:
+        json_manifest_path: '%kernel.project_dir%/web/static/manifest.json'
 
 twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
     form_themes:
-        - 'SolidInvoiceCoreBundle:Form:fields.html.twig'
+        - '@SolidInvoiceCore/Form/fields.html.twig'
 
 doctrine:
     dbal:
         driver: '%env(database_driver)%'
         host: '%env(database_host)%'
-        port: '%env(database_port)%'
+        port: '%env(int:database_port)%'
         dbname: '%env(database_name)%'
         user: '%env(database_user)%'
         password: '%env(database_password)%'
@@ -80,41 +84,22 @@ swiftmailer:
         type: memory
 
 stof_doctrine_extensions:
-    default_locale: '%locale%'
+    default_locale: '%env(locale)%'
     orm: null
-
-fos_user:
-    from_email:
-        address: 'info@solidinvoice.co'
-        sender_name: 'SolidInvoice'
-    db_driver: orm
-    firewall_name: main
-    user_class: SolidInvoice\UserBundle\Entity\User
-    profile:
-        form:
-            type: SolidInvoice\UserBundle\Form\Type\ProfileType
-    registration:
-        form:
-            type: SolidInvoice\UserBundle\Form\Type\UserType
-    resetting:
-        email:
-            template: '@SolidInvoiceUser/Email/reset_password.html.twig'
-    service:
-        mailer: fos_user.mailer.twig_swift
-
-oro_require_js:
-    config:
-        waitSeconds: 0
-        enforceDefine: false
-        scriptType: text/javascript
-    js_engine: node
-    base_url: assets
 
 api_platform:
     title: 'API'
+    version: !php/const SolidInvoice\CoreBundle\SolidInvoiceCoreBundle::VERSION
     formats:
         jsonld:   ['application/ld+json']
         jsonhal:  ['application/hal+json']
         json:     ['application/json']
         xml:      ['application/xml', 'text/xml']
         html:     ['text/html']
+
+webpack_encore:
+    output_path: '%kernel.project_dir%/web/static'
+
+sensio_framework_extra:
+    router:
+        annotations: false

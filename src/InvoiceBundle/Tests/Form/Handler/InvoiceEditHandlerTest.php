@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace SolidInvoice\InvoiceBundle\Tests\Form\Handler;
 
+use Mockery as M;
+use Money\Currency;
 use SolidInvoice\CoreBundle\Entity\Discount;
 use SolidInvoice\CoreBundle\Response\FlashResponse;
 use SolidInvoice\CoreBundle\Templating\Template;
@@ -23,15 +25,13 @@ use SolidInvoice\InvoiceBundle\Listener\WorkFlowSubscriber;
 use SolidInvoice\InvoiceBundle\Model\Graph;
 use SolidInvoice\MoneyBundle\Entity\Money;
 use SolidInvoice\NotificationBundle\Notification\NotificationManager;
-use Mockery as M;
-use Money\Currency;
 use SolidWorx\FormHandler\FormRequest;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Workflow\Definition;
-use Symfony\Component\Workflow\MarkingStore\SingleStateMarkingStore;
+use Symfony\Component\Workflow\MarkingStore\MethodMarkingStore;
 use Symfony\Component\Workflow\StateMachine;
 use Symfony\Component\Workflow\Transition;
 
@@ -39,7 +39,7 @@ class InvoiceEditHandlerTest extends FormHandlerTestCase
 {
     private $invoice;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -70,7 +70,7 @@ class InvoiceEditHandlerTest extends FormHandlerTestCase
                 ['draft', 'pending'],
                 [new Transition('accept', 'draft', 'pending')]
             ),
-            new SingleStateMarkingStore('status'),
+            new MethodMarkingStore(true, 'status'),
             $dispatcher,
             'invoice'
         );
@@ -87,7 +87,7 @@ class InvoiceEditHandlerTest extends FormHandlerTestCase
         return $handler;
     }
 
-    protected function assertOnSuccess(?Response $response, $invoice, FormRequest $form)
+    protected function assertOnSuccess(?Response $response, FormRequest $form, $invoice): void
     {
         /* @var Invoice $invoice */
 
@@ -99,7 +99,7 @@ class InvoiceEditHandlerTest extends FormHandlerTestCase
         $this->assertCount(1, $this->em->getRepository(Invoice::class)->findAll());
     }
 
-    protected function assertResponse(FormRequest $formRequest)
+    protected function assertResponse(FormRequest $formRequest): void
     {
         $this->assertInstanceOf(Template::class, $formRequest->getResponse());
     }

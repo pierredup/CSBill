@@ -13,19 +13,23 @@ declare(strict_types=1);
 
 namespace SolidInvoice\QuoteBundle\Listener\Doctrine;
 
-use SolidInvoice\CoreBundle\Billing\TotalCalculator;
-use SolidInvoice\QuoteBundle\Entity\Quote;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
+use SolidInvoice\CoreBundle\Billing\TotalCalculator;
+use SolidInvoice\QuoteBundle\Entity\Quote;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 
 class QuoteSaveListener implements EventSubscriber
 {
-    private $totalCalculator;
+    /**
+     * @var ServiceLocator
+     */
+    private $serviceLocator;
 
-    public function __construct(TotalCalculator $totalCalculator)
+    public function __construct(ServiceLocator $serviceLocator)
     {
-        $this->totalCalculator = $totalCalculator;
+        $this->serviceLocator = $serviceLocator;
     }
 
     public function getSubscribedEvents()
@@ -41,7 +45,7 @@ class QuoteSaveListener implements EventSubscriber
         $entity = $event->getEntity();
 
         if ($entity instanceof Quote) {
-            $this->totalCalculator->calculateTotals($entity);
+            $this->serviceLocator->get(TotalCalculator::class)->calculateTotals($entity);
             $this->checkDiscount($entity);
         }
     }
@@ -51,7 +55,7 @@ class QuoteSaveListener implements EventSubscriber
         $entity = $event->getEntity();
 
         if ($entity instanceof Quote) {
-            $this->totalCalculator->calculateTotals($entity);
+            $this->serviceLocator->get(TotalCalculator::class)->calculateTotals($entity);
             $this->checkDiscount($entity);
         }
     }

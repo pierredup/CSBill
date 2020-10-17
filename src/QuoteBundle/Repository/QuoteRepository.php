@@ -13,20 +13,24 @@ declare(strict_types=1);
 
 namespace SolidInvoice\QuoteBundle\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\QueryBuilder;
 use SolidInvoice\ClientBundle\Entity\Client;
 use SolidInvoice\QuoteBundle\Entity\Item;
 use SolidInvoice\QuoteBundle\Entity\Quote;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
 
-class QuoteRepository extends EntityRepository
+class QuoteRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Quote::class);
+    }
+
     /**
      * Gets total number of quotes.
      *
      * @param string $status
-     *
-     * @return int
      */
     public function getTotalQuotes(string $status = null): int
     {
@@ -48,8 +52,6 @@ class QuoteRepository extends EntityRepository
      * Gets the most recent created quotes.
      *
      * @param int $limit
-     *
-     * @return array
      */
     public function getRecentQuotes($limit = 5): array
     {
@@ -65,11 +67,6 @@ class QuoteRepository extends EntityRepository
         return $query->getResult();
     }
 
-    /**
-     * @param array $parameters
-     *
-     * @return QueryBuilder
-     */
     public function getGridQuery(array $parameters = []): QueryBuilder
     {
         $qb = $this->createQueryBuilder('q');
@@ -85,9 +82,6 @@ class QuoteRepository extends EntityRepository
         return $qb;
     }
 
-    /**
-     * @return QueryBuilder
-     */
     public function getArchivedGridQuery(): QueryBuilder
     {
         $this->getEntityManager()->getFilters()->disable('archivable');
@@ -101,9 +95,6 @@ class QuoteRepository extends EntityRepository
         return $qb;
     }
 
-    /**
-     * @param Client $client
-     */
     public function updateCurrency(Client $client)
     {
         $filters = $this->getEntityManager()->getFilters();
@@ -148,8 +139,6 @@ class QuoteRepository extends EntityRepository
 
     /**
      * Delete multiple quotes based on IDs.
-     *
-     * @param array $ids
      */
     public function deleteQuotes(array $ids): void
     {

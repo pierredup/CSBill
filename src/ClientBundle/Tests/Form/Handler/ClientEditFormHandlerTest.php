@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace SolidInvoice\ClientBundle\Tests\Form\Handler;
 
+use Mockery as M;
 use SolidInvoice\ClientBundle\Entity\Client;
 use SolidInvoice\ClientBundle\Form\Handler\ClientEditFormHandler;
 use SolidInvoice\ClientBundle\Model\Status;
 use SolidInvoice\CoreBundle\Response\FlashResponse;
 use SolidInvoice\CoreBundle\Templating\Template;
 use SolidInvoice\FormBundle\Test\FormHandlerTestCase;
-use Mockery as M;
 use SolidWorx\FormHandler\FormRequest;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +29,7 @@ class ClientEditFormHandlerTest extends FormHandlerTestCase
 {
     private $clientName;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -74,7 +74,7 @@ class ClientEditFormHandlerTest extends FormHandlerTestCase
         ];
     }
 
-    protected function assertOnSuccess(?Response $response, $client, FormRequest $form)
+    protected function assertOnSuccess(?Response $response, FormRequest $form, $client): void
     {
         /* @var Client $client */
 
@@ -84,7 +84,7 @@ class ClientEditFormHandlerTest extends FormHandlerTestCase
         $this->assertCount(1, $response->getFlash());
     }
 
-    protected function assertResponse(FormRequest $formRequest)
+    protected function assertResponse(FormRequest $formRequest): void
     {
         $this->assertInstanceOf(Template::class, $formRequest->getResponse());
     }

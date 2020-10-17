@@ -30,18 +30,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractContactFormHandler implements FormHandlerInterface, FormHandlerResponseInterface, FormHandlerSuccessInterface, FormHandlerOptionsResolver
 {
-    use SaveableTrait,
-        SerializeTrait;
+    use SaveableTrait;
+    use SerializeTrait;
 
     /**
      * {@inheritdoc}
      */
     public function getResponse(FormRequest $formRequest)
     {
-        if ($formRequest->getForm()->isSubmitted() && $formRequest->getForm()->isValid()) {
-            return $this->serialize($formRequest->getForm()->getData(), ['client_api']);
-        }
-
         return new Template(
             $this->getTemplate(),
             [
@@ -61,17 +57,14 @@ abstract class AbstractContactFormHandler implements FormHandlerInterface, FormH
     /**
      * {@inheritdoc}
      */
-    public function onSuccess($client, FormRequest $form): ?Response
+    public function onSuccess(FormRequest $form, $contact): ?Response
     {
-        /* @var Contact $client */
-        $this->save($client);
+        /* @var Contact $contact */
+        $this->save($contact);
 
-        return $this->getResponse($form);
+        return $this->serialize($contact, ['client_api']);
     }
 
-    /**
-     * @return string
-     */
     abstract public function getTemplate(): string;
 
     // This needs to be public for the lazy proxy service definition to work

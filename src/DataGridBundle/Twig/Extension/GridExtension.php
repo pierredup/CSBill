@@ -17,16 +17,11 @@ use SolidInvoice\DataGridBundle\Repository\GridRepository;
 
 class GridExtension extends \Twig\Extension\AbstractExtension
 {
-    private static $statusRendered = false;
-
     /**
      * @var GridRepository
      */
     private $repository;
 
-    /**
-     * @param GridRepository $repository
-     */
     public function __construct(GridRepository $repository)
     {
         $this->repository = $repository;
@@ -58,12 +53,6 @@ class GridExtension extends \Twig\Extension\AbstractExtension
     }
 
     /**
-     * @param \Twig\Environment $env
-     * @param string            $gridName
-     * @param array             $parameters
-     *
-     * @return string
-     *
      * @throws \SolidInvoice\DataGridBundle\Exception\InvalidGridException
      */
     public function renderGrid(\Twig\Environment $env, string $gridName, array $parameters = []): string
@@ -76,30 +65,16 @@ class GridExtension extends \Twig\Extension\AbstractExtension
 
         $gridOptions = json_encode($grid);
 
-        $html = '';
-
-        if ($grid->requiresStatus() && false === self::$statusRendered) {
-            $html .= $env->render('@SolidInvoiceCore/_partials/status_labels.html.twig');
-            self::$statusRendered = true;
-        }
-
-        $html .= $env->render(
+        return $env->render(
             '@SolidInvoiceDataGrid/grid.html.twig',
             [
                 'gridName' => $gridName,
                 'gridOptions' => $gridOptions,
-                'requiresStatus' => $grid->requiresStatus(),
             ]
         );
-
-        return $html;
     }
 
     /**
-     * @param \Twig\Environment $env
-     *
-     * @return string
-     *
      * @throws \SolidInvoice\DataGridBundle\Exception\InvalidGridException
      */
     public function renderMultipleGrid(\Twig\Environment $env): string
@@ -117,8 +92,6 @@ class GridExtension extends \Twig\Extension\AbstractExtension
             $grids = $grids[0];
         }
 
-        $requiresStatus = false;
-
         $renderGrids = [];
 
         foreach ($grids as $gridName) {
@@ -127,8 +100,6 @@ class GridExtension extends \Twig\Extension\AbstractExtension
 
             $gridOptions = json_encode($grid);
 
-            $requiresStatus = $requiresStatus || $grid->requiresStatus();
-
             $renderGrids[$gridName] = json_decode($gridOptions, true);
         }
 
@@ -136,7 +107,6 @@ class GridExtension extends \Twig\Extension\AbstractExtension
             '@SolidInvoiceDataGrid/multiple_grid.html.twig',
             [
                 'grids' => $renderGrids,
-                'requiresStatus' => $requiresStatus,
             ]
         );
     }

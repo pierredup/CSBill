@@ -13,19 +13,19 @@ declare(strict_types=1);
 
 namespace SolidInvoice\ClientBundle\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Money\Money;
 use SolidInvoice\ClientBundle\Entity\Client;
 use SolidInvoice\ClientBundle\Entity\Credit;
-use Doctrine\ORM\EntityRepository;
-use Money\Money;
 
-class CreditRepository extends EntityRepository
+class CreditRepository extends ServiceEntityRepository
 {
-    /**
-     * @param Client $client
-     * @param Money  $amount
-     *
-     * @return Credit
-     */
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Credit::class);
+    }
+
     public function addCredit(Client $client, Money $amount): Credit
     {
         $credit = $client->getCredit();
@@ -35,12 +35,6 @@ class CreditRepository extends EntityRepository
         return $this->save($credit);
     }
 
-    /**
-     * @param Client $client
-     * @param Money  $amount
-     *
-     * @return \SolidInvoice\ClientBundle\Entity\Credit
-     */
     public function deductCredit(Client $client, Money $amount): Credit
     {
         $credit = $client->getCredit();
@@ -50,11 +44,6 @@ class CreditRepository extends EntityRepository
         return $this->save($credit);
     }
 
-    /**
-     * @param Credit $credit
-     *
-     * @return Credit
-     */
     private function save(Credit $credit): Credit
     {
         $entityManager = $this->getEntityManager();
@@ -64,9 +53,6 @@ class CreditRepository extends EntityRepository
         return $credit;
     }
 
-    /**
-     * @param Client $client
-     */
     public function updateCurrency(Client $client)
     {
         $filters = $this->getEntityManager()->getFilters();

@@ -13,18 +13,22 @@ declare(strict_types=1);
 
 namespace SolidInvoice\TaxBundle\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\QueryBuilder;
 use SolidInvoice\InvoiceBundle\Entity\Item as InvoiceItem;
 use SolidInvoice\QuoteBundle\Entity\Item as QuoteItem;
 use SolidInvoice\TaxBundle\Entity\Tax;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
 
-class TaxRepository extends EntityRepository
+class TaxRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Tax::class);
+    }
+
     /**
      * Gets an array of all the available tax rates.
-     *
-     * @return array
      */
     public function getTaxList(): array
     {
@@ -40,14 +44,11 @@ class TaxRepository extends EntityRepository
         $query = $queryBuilder->getQuery();
 
         $query->useQueryCache(true)
-            ->useResultCache(true, (60 * 60 * 24), 'tax_list');
+            ->enableResultCache((60 * 60 * 24), 'tax_list');
 
         return $query->getArrayResult();
     }
 
-    /**
-     * @return bool
-     */
     public function taxRatesConfigured(): bool
     {
         return $this->getTotal() > 0;
@@ -55,8 +56,6 @@ class TaxRepository extends EntityRepository
 
     /**
      * Gets an array of all the available tax rates.
-     *
-     * @return int
      */
     public function getTotal(): int
     {
@@ -66,9 +65,6 @@ class TaxRepository extends EntityRepository
         return (int) $queryBuilder->getQuery()->getSingleScalarResult();
     }
 
-    /**
-     * @return QueryBuilder
-     */
     public function getGridQuery(): QueryBuilder
     {
         $qb = $this->createQueryBuilder('t');
@@ -78,9 +74,6 @@ class TaxRepository extends EntityRepository
         return $qb;
     }
 
-    /**
-     * @param array $data
-     */
     public function deleteTaxRates(array $data): void
     {
         $em = $this->getEntityManager();

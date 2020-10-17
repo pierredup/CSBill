@@ -25,7 +25,7 @@ use Twilio\Rest\Client;
 
 class SolidInvoiceNotificationExtensionTest extends AbstractExtensionTestCase
 {
-    protected function getContainerExtensions()
+    protected function getContainerExtensions(): array
     {
         return [new SolidInvoiceNotificationExtension()];
     }
@@ -34,10 +34,10 @@ class SolidInvoiceNotificationExtensionTest extends AbstractExtensionTestCase
     {
         $this->load();
 
-        $this->assertContainerBuilderHasService('notification.sender', Manager::class);
-        $this->assertContainerBuilderHasService('notification.manager', NotificationManager::class);
-        $this->assertContainerBuilderHasService('notification.factory', Factory::class);
-        $this->assertContainerBuilderHasService('twilio.client', Client::class);
+        $this->assertContainerBuilderHasService(Manager::class);
+        $this->assertContainerBuilderHasService(NotificationManager::class);
+        $this->assertContainerBuilderHasService(Factory::class);
+        $this->assertContainerBuilderHasService(Client::class);
 
         $this->assertContainerBuilderHasService(ChainedHandler::class);
         $this->assertContainerBuilderHasService(TwilioHandler::class);

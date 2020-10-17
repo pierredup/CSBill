@@ -15,13 +15,13 @@ namespace SolidInvoice\ClientBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use SolidInvoice\CoreBundle\Traits\Entity;
-use SolidInvoice\InvoiceBundle\Entity\Invoice;
-use SolidInvoice\QuoteBundle\Entity\Quote;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use SolidInvoice\CoreBundle\Traits\Entity;
+use SolidInvoice\InvoiceBundle\Entity\Invoice;
+use SolidInvoice\QuoteBundle\Entity\Quote;
 use Symfony\Component\Serializer\Annotation as Serialize;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -29,7 +29,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(attributes={"normalization_context"={"groups"={"contact_api"}}, "denormalization_context"={"groups"={"contact_api"}}}, collectionOperations={"post"={"method"="POST"}}, iri="https://schema.org/Person")
  * @ORM\Table(name="contacts", indexes={@ORM\Index(columns={"email"})})
  * @ORM\Entity(repositoryClass="SolidInvoice\ClientBundle\Repository\ContactRepository")
- * @Gedmo\Loggable()
+ * @Gedmo\Loggable
  */
 class Contact implements \Serializable
 {
@@ -83,7 +83,7 @@ class Contact implements \Serializable
      *
      * @ORM\Column(name="email", type="string", length=255)
      * @Assert\NotBlank()
-     * @Assert\Email(strict=true)
+     * @Assert\Email(mode="strict")
      * @Serialize\Groups({"client_api", "contact_api"})
      * @ApiProperty(iri="https://schema.org/email")
      */
@@ -142,8 +142,6 @@ class Contact implements \Serializable
     /**
      * Set firstName.
      *
-     * @param string $firstName
-     *
      * @return Contact
      */
     public function setFirstName(string $firstName): self
@@ -190,8 +188,6 @@ class Contact implements \Serializable
     /**
      * Set client.
      *
-     * @param Client $client
-     *
      * @return Contact
      */
     public function setClient(Client $client): self
@@ -203,8 +199,6 @@ class Contact implements \Serializable
 
     /**
      * Add additional detail.
-     *
-     * @param AdditionalContactDetail $detail
      *
      * @return Contact
      */
@@ -218,8 +212,6 @@ class Contact implements \Serializable
 
     /**
      * Removes additional detail from the current contact.
-     *
-     * @param AdditionalContactDetail $detail
      *
      * @return Contact
      */
@@ -240,11 +232,6 @@ class Contact implements \Serializable
         return $this->additionalContactDetails;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return AdditionalContactDetail|null
-     */
     public function getAdditionalContactDetail(string $type): ?AdditionalContactDetail
     {
         $type = strtolower($type);
@@ -259,9 +246,6 @@ class Contact implements \Serializable
         return null;
     }
 
-    /**
-     * @return string
-     */
     public function serialize(): string
     {
         return serialize([$this->id, $this->firstName, $this->lastName, $this->created, $this->updated]);
@@ -275,9 +259,6 @@ class Contact implements \Serializable
         list($this->id, $this->firstName, $this->lastName, $this->created, $this->updated) = unserialize($serialized);
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->firstName.' '.$this->lastName;
@@ -292,8 +273,6 @@ class Contact implements \Serializable
     }
 
     /**
-     * @param string $email
-     *
      * @return Contact
      */
     public function setEmail(string $email): self

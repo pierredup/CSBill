@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace SolidInvoice\PaymentBundle\Tests\Form\Handler;
 
+use Mockery as M;
 use SolidInvoice\CoreBundle\Templating\Template;
 use SolidInvoice\FormBundle\Test\FormHandlerTestCase;
 use SolidInvoice\PaymentBundle\Entity\PaymentMethod;
 use SolidInvoice\PaymentBundle\Factory\PaymentFactories;
 use SolidInvoice\PaymentBundle\Form\Handler\PaymentMethodSettingsHandler;
-use Mockery as M;
 use SolidWorx\FormHandler\FormHandlerInterface;
 use SolidWorx\FormHandler\FormRequest;
 use Symfony\Component\HttpFoundation\Response;
@@ -65,7 +65,7 @@ class PaymentMethodSettingsHandlerTest extends FormHandlerTestCase
         ];
     }
 
-    protected function assertOnSuccess(?Response $response, $data, FormRequest $form)
+    protected function assertOnSuccess(?Response $response, FormRequest $form, $data): void
     {
         /* @var PaymentMethod $data */
         $this->assertSame('My Test Payment', $data->getName());
@@ -73,7 +73,7 @@ class PaymentMethodSettingsHandlerTest extends FormHandlerTestCase
         $this->assertCount(4, $this->em->getRepository(PaymentMethod::class)->findAll());
     }
 
-    protected function assertResponse(FormRequest $formRequest)
+    protected function assertResponse(FormRequest $formRequest): void
     {
         $this->assertInstanceOf(Template::class, $formRequest->getResponse());
     }

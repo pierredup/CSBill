@@ -28,9 +28,6 @@ class MoneyType extends Type
      */
     private static $currency;
 
-    /**
-     * @param \Money\Currency $currency
-     */
     public static function setCurrency(Currency $currency)
     {
         self::$currency = $currency;
@@ -83,6 +80,11 @@ class MoneyType extends Type
         }
 
         throw ConversionException::conversionFailed($value, self::NAME);
+    }
+
+    public function requiresSQLCommentHint(AbstractPlatform $platform)
+    {
+        return true;
     }
 
     /**

@@ -13,16 +13,16 @@ declare(strict_types=1);
 
 namespace SolidInvoice\ClientBundle\Entity;
 
-use SolidInvoice\CoreBundle\Traits\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Symfony\Component\Intl\Intl;
+use SolidInvoice\CoreBundle\Traits\Entity;
+use Symfony\Component\Intl\Countries;
 use Symfony\Component\Serializer\Annotation as Serialize;
 
 /**
  * @ORM\Table(name="addresses")
  * @ORM\Entity()
- * @Gedmo\Loggable()
+ * @Gedmo\Loggable
  */
 class Address
 {
@@ -223,7 +223,7 @@ class Address
      */
     public function getCountryName(): ?string
     {
-        return Intl::getRegionBundle()->getCountryName($this->getCountry());
+        return Countries::getName($this->getCountry());
     }
 
     /**
@@ -247,8 +247,6 @@ class Address
     }
 
     /**
-     * @param Client $client
-     *
      * @return Address
      */
     public function setClient(Client $client): self
@@ -258,15 +256,12 @@ class Address
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         static $countries;
 
         if (empty($countries)) {
-            $countries = Intl::getRegionBundle()->getCountryNames();
+            $countries = Countries::getNames();
         }
 
         $info = array_filter(
@@ -284,13 +279,11 @@ class Address
     }
 
     /**
-     * @param array $data
-     *
      * @return Address
      */
     public static function fromArray(array $data): self
     {
-        $address = new static();
+        $address = new self();
         $address->setStreet1($data['street1'] ?? null);
         $address->setStreet2($data['street2'] ?? null);
         $address->setCity($data['city'] ?? null);

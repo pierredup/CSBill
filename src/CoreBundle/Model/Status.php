@@ -16,7 +16,7 @@ namespace SolidInvoice\CoreBundle\Model;
 /**
  * This class converts a status into a label for use with twitter bootstrap.
  *
- * E.G it will convert 'active' into 'success', so it can be used with then class 'label-success'
+ * E.G it will convert 'active' into 'success', so it can be used with then class 'badge-success'
  *
  * @author Pierre du Plessis
  */
@@ -31,10 +31,6 @@ abstract class Status
 
     /**
      * Converts a status into a label.
-     *
-     * @param string $status
-     *
-     * @return string
      */
     public function getStatusLabel(string $status): string
     {
@@ -47,22 +43,16 @@ abstract class Status
 
     /**
      * Returns the HTML to display the status.
-     *
-     * @param string $status
-     *
-     * @return string
      */
     public function getHtml(string $status): string
     {
         $status = str_replace(['-', '_'], ' ', strtolower((string) $status));
 
-        return '<label class="label label-'.$this->getStatusLabel($status).'">'.ucwords($status).'</label>';
+        return '<label class="badge badge-'.$this->getStatusLabel($status).'">'.ucwords($status).'</label>';
     }
 
     /**
      * Return an array of all the available statuses.
-     *
-     * @return array
      */
     public function getStatusList(): array
     {

@@ -65,11 +65,9 @@ class Version
 
     /**
      * Return the version as a string.
-     *
-     * @return string
      */
-    public function __toString(): ?string
+    public function __toString(): string
     {
-        return $this->version;
+        return (string) $this->version;
     }
 }

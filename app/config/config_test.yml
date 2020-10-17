@@ -2,10 +2,10 @@ imports:
     - { resource: config_dev.yml }
 
 parameters:
-    database_name: solidinvoice_test
+    env(database_name): solidinvoice_test
 
 framework:
-    test: null
+    test: true
     session:
         storage_id: session.storage.mock_file
     profiler:
@@ -17,3 +17,6 @@ web_profiler:
 
 swiftmailer:
     disable_delivery: true
+
+liip_test_fixtures:
+    keep_database_and_schema: true

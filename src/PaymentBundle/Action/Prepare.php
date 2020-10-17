@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace SolidInvoice\PaymentBundle\Action;
 
+use Money\Currency;
+use Money\Money;
+use Payum\Core\Payum;
 use SolidInvoice\CoreBundle\Response\FlashResponse;
 use SolidInvoice\CoreBundle\Templating\Template;
 use SolidInvoice\CoreBundle\Traits\SaveableTrait;
@@ -26,9 +29,6 @@ use SolidInvoice\PaymentBundle\Factory\PaymentFactories;
 use SolidInvoice\PaymentBundle\Form\Type\PaymentType;
 use SolidInvoice\PaymentBundle\Model\Status;
 use SolidInvoice\PaymentBundle\Repository\PaymentMethodRepository;
-use Money\Currency;
-use Money\Money;
-use Payum\Core\Payum;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -130,7 +130,7 @@ final class Prepare
             throw new \Exception('This invoice cannot be paid');
         }
 
-        if ($this->paymentMethodRepository->getTotalMethodsConfigured($this->authorization->isGranted('ROLE_SUPER_ADMIN')) < 1) {
+        if ($this->paymentMethodRepository->getTotalMethodsConfigured($this->authorization->isGranted('IS_AUTHENTICATED_REMEMBERED')) < 1) {
             throw new \Exception('No payment methods available');
         }
 
@@ -153,7 +153,7 @@ final class Prepare
 
         $paymentFactories = array_keys($this->paymentFactories->getFactories('offline'));
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             /** @var Money $amount */
             $amount = $data['amount'];
@@ -222,7 +222,7 @@ final class Prepare
                 $this->save($payment);
 
                 $event = new PaymentCompleteEvent($payment);
-                $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_COMPLETE, $event);
+                $this->eventDispatcher->dispatch($event, PaymentEvents::PAYMENT_COMPLETE);
 
                 if ($response = $event->getResponse()) {
                     return $response;

@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace SolidInvoice\ApiBundle\Security;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use SolidInvoice\ApiBundle\Security\Provider\ApiTokenUserProvider;
 use SolidInvoice\UserBundle\Entity\ApiTokenHistory;
 use SolidInvoice\UserBundle\Repository\ApiTokenHistoryRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -38,10 +38,6 @@ class ApiTokenAuthenticator implements SimplePreAuthenticatorInterface, Authenti
      */
     private $registry;
 
-    /**
-     * @param ApiTokenUserProvider $userProvider
-     * @param ManagerRegistry      $registry
-     */
     public function __construct(
         ApiTokenUserProvider $userProvider,
         ManagerRegistry $registry
@@ -51,10 +47,7 @@ class ApiTokenAuthenticator implements SimplePreAuthenticatorInterface, Authenti
     }
 
     /**
-     * @param Request $request
-     * @param string  $providerKey
-     *
-     * @return PreAuthenticatedToken
+     * @param string $providerKey
      *
      * @throws AuthenticationCredentialsNotFoundException
      */
@@ -75,8 +68,6 @@ class ApiTokenAuthenticator implements SimplePreAuthenticatorInterface, Authenti
     }
 
     /**
-     * @param Request $request
-     *
      * @return string
      */
     private function getToken(Request $request): ?string
@@ -85,17 +76,13 @@ class ApiTokenAuthenticator implements SimplePreAuthenticatorInterface, Authenti
     }
 
     /**
-     * @param TokenInterface        $token
-     * @param UserProviderInterface $userProvider
-     * @param string                $providerKey
-     *
-     * @return PreAuthenticatedToken
+     * @param string $providerKey
      *
      * @throws BadCredentialsException
      */
     public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey): PreAuthenticatedToken
     {
-        /* @var ApiTokenUserProvider $userProvider */
+        assert($userProvider instanceof ApiTokenUserProvider);
 
         $apiToken = $token->getCredentials();
         $username = $userProvider->getUsernameForToken($apiToken);
@@ -117,10 +104,7 @@ class ApiTokenAuthenticator implements SimplePreAuthenticatorInterface, Authenti
     }
 
     /**
-     * @param TokenInterface $token
-     * @param string         $providerKey
-     *
-     * @return bool
+     * @param string $providerKey
      */
     public function supportsToken(TokenInterface $token, $providerKey): bool
     {
@@ -146,5 +130,7 @@ class ApiTokenAuthenticator implements SimplePreAuthenticatorInterface, Authenti
         $repository = $this->registry->getRepository(ApiTokenHistory::class);
 
         $repository->addHistory($history, $apiToken);
+
+        return null;
     }
 }

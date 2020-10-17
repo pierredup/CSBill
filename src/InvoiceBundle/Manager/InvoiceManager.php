@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace SolidInvoice\InvoiceBundle\Manager;
 
 use Carbon\Carbon;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use SolidInvoice\InvoiceBundle\Entity\Invoice;
 use SolidInvoice\InvoiceBundle\Entity\Item;
 use SolidInvoice\InvoiceBundle\Event\InvoiceEvent;
@@ -23,8 +25,6 @@ use SolidInvoice\InvoiceBundle\Model\Graph;
 use SolidInvoice\InvoiceBundle\Notification\InvoiceStatusNotification;
 use SolidInvoice\NotificationBundle\Notification\NotificationManager;
 use SolidInvoice\QuoteBundle\Entity\Quote;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -54,12 +54,6 @@ class InvoiceManager implements ContainerAwareInterface
      */
     private $notification;
 
-    /**
-     * @param ManagerRegistry          $doctrine
-     * @param EventDispatcherInterface $dispatcher
-     * @param StateMachine             $stateMachine
-     * @param NotificationManager      $notification
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         EventDispatcherInterface $dispatcher,
@@ -74,10 +68,6 @@ class InvoiceManager implements ContainerAwareInterface
 
     /**
      * Create an invoice from a quote.
-     *
-     * @param Quote $quote
-     *
-     * @return Invoice
      */
     public function createFromQuote(Quote $quote): Invoice
     {
@@ -120,10 +110,6 @@ class InvoiceManager implements ContainerAwareInterface
     }
 
     /**
-     * @param Invoice $invoice
-     *
-     * @return Invoice
-     *
      * @throws InvalidTransitionException
      */
     public function create(Invoice $invoice): Invoice
@@ -148,22 +134,17 @@ class InvoiceManager implements ContainerAwareInterface
 
         $this->applyTransition($invoice, Graph::TRANSITION_NEW);
 
-        $this->dispatcher->dispatch(InvoiceEvents::INVOICE_PRE_CREATE, new InvoiceEvent($invoice));
+        $this->dispatcher->dispatch(new InvoiceEvent($invoice), InvoiceEvents::INVOICE_PRE_CREATE);
 
         $this->entityManager->persist($invoice);
         $this->entityManager->flush();
 
-        $this->dispatcher->dispatch(InvoiceEvents::INVOICE_POST_CREATE, new InvoiceEvent($invoice));
+        $this->dispatcher->dispatch(new InvoiceEvent($invoice), InvoiceEvents::INVOICE_POST_CREATE);
 
         return $invoice;
     }
 
     /**
-     * @param Invoice $invoice
-     * @param string  $transition
-     *
-     * @return bool
-     *
      * @throws InvalidTransitionException
      */
     private function applyTransition(Invoice $invoice, string $transition): bool

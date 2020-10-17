@@ -2,8 +2,7 @@ services:
     solidinvoice_payment.menu.top:
         class: SolidInvoice\PaymentBundle\Menu\Builder
         tags:
-            - { name: cs_core.menu, menu: top_right, method: topRightMenu }
-            - { name: cs_core.menu, menu: top, method: topMenu, priority: -1 }
+            - { name: cs_core.menu, menu: sidebar, method: topMenu, priority: -1 }
 
     solidinvoice.payment.payum.paypal_express.action.payment_status_action:
         class: SolidInvoice\PaymentBundle\PaymentAction\PaypalExpress\PaymentDetailsStatusAction
@@ -20,3 +19,22 @@ services:
         arguments: ['@doctrine']
         tags:
             - { name: payum.extension, all: true }
+
+    solidinvoice.payment.locator:
+        class: Symfony\Component\DependencyInjection\ServiceLocator
+        tags: ['container.service_locator']
+        arguments:
+            -   SolidInvoice\CoreBundle\Billing\TotalCalculator: '@SolidInvoice\CoreBundle\Billing\TotalCalculator'
+
+    SolidInvoice\PaymentBundle\Repository\PaymentRepository:
+        autowire: true
+        tags: ['doctrine.repository_service']
+
+    SolidInvoice\PaymentBundle\Repository\PaymentMethodRepository:
+        autowire: true
+        tags: ['doctrine.repository_service']
+
+    # Fixtures
+    SolidInvoice\PaymentBundle\DataFixtures\ORM\:
+        resource: '%kernel.project_dir%/src/PaymentBundle/DataFixtures/ORM/*'
+        tags: ['doctrine.fixture.orm']

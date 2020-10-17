@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace SolidInvoice\QuoteBundle\Tests\Form\Handler;
 
+use Mockery as M;
+use Money\Currency;
 use SolidInvoice\CoreBundle\Response\FlashResponse;
 use SolidInvoice\CoreBundle\Templating\Template;
 use SolidInvoice\FormBundle\Test\FormHandlerTestCase;
@@ -24,15 +26,13 @@ use SolidInvoice\QuoteBundle\Entity\Quote;
 use SolidInvoice\QuoteBundle\Form\Handler\QuoteCreateHandler;
 use SolidInvoice\QuoteBundle\Listener\WorkFlowSubscriber;
 use SolidInvoice\QuoteBundle\Model\Graph;
-use Mockery as M;
-use Money\Currency;
 use SolidWorx\FormHandler\FormRequest;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Workflow\Definition;
-use Symfony\Component\Workflow\MarkingStore\SingleStateMarkingStore;
+use Symfony\Component\Workflow\MarkingStore\MethodMarkingStore;
 use Symfony\Component\Workflow\StateMachine;
 use Symfony\Component\Workflow\Transition;
 
@@ -51,7 +51,7 @@ class QuoteCreateHandlerTest extends FormHandlerTestCase
                 ['new', 'draft'],
                 [new Transition('new', 'new', 'draft')]
             ),
-            new SingleStateMarkingStore('status'),
+            new MethodMarkingStore(true, 'status'),
             $dispatcher,
             'invoice'
         );
@@ -67,7 +67,7 @@ class QuoteCreateHandlerTest extends FormHandlerTestCase
                 ['new', 'draft'],
                 [new Transition('new', 'new', 'draft')]
             ),
-            new SingleStateMarkingStore('status'),
+            new MethodMarkingStore(true, 'status'),
             $dispatcher,
             'quote'
         );
@@ -98,7 +98,7 @@ class QuoteCreateHandlerTest extends FormHandlerTestCase
         ];
     }
 
-    protected function assertOnSuccess(?Response $response, $quote, FormRequest $form)
+    protected function assertOnSuccess(?Response $response, FormRequest $form, $quote): void
     {
         /* @var Quote $quote */
 
@@ -109,7 +109,7 @@ class QuoteCreateHandlerTest extends FormHandlerTestCase
         $this->assertCount(1, $this->em->getRepository(Quote::class)->findAll());
     }
 
-    protected function assertResponse(FormRequest $formRequest)
+    protected function assertResponse(FormRequest $formRequest): void
     {
         $this->assertInstanceOf(Template::class, $formRequest->getResponse());
     }

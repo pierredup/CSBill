@@ -13,23 +13,24 @@ declare(strict_types=1);
 
 namespace SolidInvoice\InvoiceBundle\Tests\Listener;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery as M;
+use Money\Currency;
+use Money\Money;
+use PHPUnit\Framework\TestCase;
 use SolidInvoice\CoreBundle\Test\Traits\DoctrineTestTrait;
 use SolidInvoice\InvoiceBundle\Entity\Invoice;
 use SolidInvoice\InvoiceBundle\Listener\WorkFlowSubscriber;
 use SolidInvoice\NotificationBundle\Notification\NotificationManager;
-use Mockery as M;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Money\Currency;
-use Money\Money;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Transition;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 class WorkFlowSubscriberTest extends TestCase
 {
-    use DoctrineTestTrait,
-        MockeryPHPUnitIntegration;
+    use DoctrineTestTrait;
+    use MockeryPHPUnitIntegration;
 
     public function testInvoicePaid()
     {
@@ -43,7 +44,7 @@ class WorkFlowSubscriberTest extends TestCase
             ->setStatus('pending')
             ->setBalance(new Money(1200, new Currency('USD')));
 
-        $subscriber->onWorkflowTransitionApplied(new Event($invoice, new Marking(['pending' => 1]), new Transition('pay', 'pending', 'paid')));
+        $subscriber->onWorkflowTransitionApplied(new Event($invoice, new Marking(['pending' => 1]), new Transition('pay', 'pending', 'paid'), M::mock(WorkflowInterface::class)));
         $this->assertNotNull($invoice->getPaidDate());
         $this->assertEquals($invoice, $this->em->getRepository(Invoice::class)->find($invoice->getId()));
     }
@@ -60,7 +61,7 @@ class WorkFlowSubscriberTest extends TestCase
             ->setStatus('pending')
             ->setBalance(new Money(1200, new Currency('USD')));
 
-        $subscriber->onWorkflowTransitionApplied(new Event($invoice, new Marking(['pending' => 1]), new Transition('archive', 'pending', 'archived')));
+        $subscriber->onWorkflowTransitionApplied(new Event($invoice, new Marking(['pending' => 1]), new Transition('archive', 'pending', 'archived'), M::mock(WorkflowInterface::class)));
 
         $this->assertTrue($invoice->isArchived());
         $this->assertSame($invoice, $this->em->getRepository(Invoice::class)->find($invoice->getId()));

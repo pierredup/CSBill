@@ -1,9 +1,7 @@
-define(
-    ['marionette', './contact'],
-    function(Mn, ContactView) {
-        'use strict';
+import { CollectionView } from 'backbone.marionette';
+import ContactView from './contact';
 
-        return Mn.CollectionView.extend({
-            childView: ContactView
-        });
-    });
+export default CollectionView.extend({
+    className: 'row',
+    childView: ContactView
+});

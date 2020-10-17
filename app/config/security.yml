@@ -1,8 +1,7 @@
 security:
     encoders:
-        FOS\UserBundle\Model\UserInterface:
-            algorithm: bcrypt
-            cost: 10
+        SolidInvoice\UserBundle\Entity\User:
+            algorithm: auto
     role_hierarchy:
         ROLE_ADMIN: null
         ROLE_SUPER_ADMIN:
@@ -11,10 +10,11 @@ security:
         ROLE_CLIENT: ROLE_USER
         ROLE_USER: null
     providers:
-        fos_userbundle:
-            id: fos_user.user_provider.username_email
+        solidinvoice_user:
+            entity:
+                class: SolidInvoice\UserBundle\Entity\User
         api_token_user_provider:
-            id: api_token_user_provider
+            id: 'SolidInvoice\ApiBundle\Security\Provider\ApiTokenUserProvider'
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -27,15 +27,16 @@ security:
             stateless: true
             anonymous: true
             form_login:
+                provider: api_token_user_provider
                 check_path: /api/login
                 require_previous_session: false
-                success_handler: api.success
-                failure_handler: api.failure
+                success_handler: 'SolidInvoice\ApiBundle\Event\Listener\AuthenticationSuccessHandler'
+                failure_handler: 'SolidInvoice\ApiBundle\Event\Listener\AuthenticationFailHandler'
         api:
             pattern: ^/api
             stateless: true
             simple_preauth:
-                authenticator: api_token_authenticator
+                authenticator: 'SolidInvoice\ApiBundle\Security\ApiTokenAuthenticator'
             provider: api_token_user_provider
         installer:
             pattern: '^/install(.*)'
@@ -60,20 +61,20 @@ security:
             pattern: ^/login$
             anonymous: null
         password_reset:
-            pattern: '^/resetting(.*)'
+            pattern: '^/forgot-password(.*)'
             anonymous: null
         main:
             remember_me:
-                secret: '%secret%'
+                secret: '%env(secret)%'
                 lifetime: 3600
                 path: /
                 domain: null
             pattern: ^/
             context: frontend
             form_login:
-                provider: fos_userbundle
+                provider: solidinvoice_user
                 csrf_token_generator: security.csrf.token_manager
-                check_path: /login_check
+                check_path: /login-check
                 login_path: /login
             logout:
                 path: /logout

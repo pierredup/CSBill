@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace SolidInvoice\MenuBundle;
 
 use Knp\Menu\FactoryInterface;
+use Knp\Menu\ItemInterface;
 use Knp\Menu\ItemInterface as Item;
 use Knp\Menu\Matcher\Matcher;
 use Knp\Menu\Matcher\Voter\RouteVoter;
@@ -21,7 +22,8 @@ use Knp\Menu\Renderer\ListRenderer;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Templating\EngineInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
 class Renderer extends ListRenderer implements RendererInterface, ContainerAwareInterface
 {
@@ -33,32 +35,39 @@ class Renderer extends ListRenderer implements RendererInterface, ContainerAware
     protected $factory;
 
     /**
-     * @var EngineInterface
+     * @var Environment
      */
-    protected $templating;
+    protected $twig;
 
     /**
-     * @param RequestStack     $requestStack
-     * @param FactoryInterface $factory
-     *
+     * @var TranslatorInterface
+     */
+    private $translator;
+
+    /**
      * @throws \InvalidArgumentException
      */
-    public function __construct(RequestStack $requestStack, FactoryInterface $factory)
+    public function __construct(RequestStack $requestStack, FactoryInterface $factory, TranslatorInterface $translator, Environment $twig)
     {
         $this->factory = $factory;
+        $this->twig = $twig;
+        $this->translator = $translator;
 
-        $matcher = new Matcher([new RouteVoter($requestStack->getCurrentRequest())]);
+        $matcher = new class([new RouteVoter($requestStack)]) extends Matcher {
+            public function isCurrent(ItemInterface $item)
+            {
+                $current = parent::isCurrent($item);
+                $item->setCurrent($current);
+
+                return $current;
+            }
+        };
 
         parent::__construct($matcher, ['allow_safe_labels' => true, 'currentClass' => 'active']);
     }
 
     /**
      * Renders a menu at a specific location.
-     *
-     * @param \SplPriorityQueue $storage
-     * @param array             $options
-     *
-     * @return string
      */
     public function build(\SplPriorityQueue $storage, array $options = []): string
     {
@@ -67,7 +76,7 @@ class Renderer extends ListRenderer implements RendererInterface, ContainerAware
         if (isset($options['attr'])) {
             $menu->setChildrenAttributes($options['attr']);
         } else {
-            $menu->setChildrenAttributes(['class' => 'sidebar-menu tree', 'data-widget' => 'tree']);
+            $menu->setChildrenAttributes(['class' => 'nav nav-pills nav-sidebar flex-column']);
         }
 
         foreach ($storage as $builder) {
@@ -87,10 +96,7 @@ class Renderer extends ListRenderer implements RendererInterface, ContainerAware
      * has children).
      * This method updates the depth for the children.
      *
-     * @param Item  $item
      * @param array $options The options to render the item
-     *
-     * @return string
      */
     protected function renderChildren(Item $item, array $options): string
     {
@@ -112,12 +118,6 @@ class Renderer extends ListRenderer implements RendererInterface, ContainerAware
         return $html;
     }
 
-    /**
-     * @param Item  $item
-     * @param array $options
-     *
-     * @return string
-     */
     protected function renderDivider(Item $item, array $options = []): string
     {
         return $this->format(
@@ -130,11 +130,6 @@ class Renderer extends ListRenderer implements RendererInterface, ContainerAware
 
     /**
      * Renders the menu label.
-     *
-     * @param Item  $item
-     * @param array $options
-     *
-     * @return string
      */
     protected function renderLabel(Item $item, array $options): string
     {
@@ -143,24 +138,27 @@ class Renderer extends ListRenderer implements RendererInterface, ContainerAware
             $icon = $this->renderIcon($item->getExtra('icon'));
         }
 
-        $translator = $this->container->get('translator');
-
         if ($options['allow_safe_labels'] && $item->getExtra('safe_label', false)) {
-            return $icon.$translator->trans($item->getLabel());
+            return $icon.$this->translator->trans($item->getLabel());
         }
 
-        return sprintf('%s <span>%s</span>', $icon, $this->escape($translator->trans($item->getLabel())));
+        return sprintf('%s <p>%s</p>', $icon, $this->escape($this->translator->trans($item->getLabel())));
     }
 
     /**
      * Renders an icon in the menu.
-     *
-     * @param string $icon
-     *
-     * @return string
      */
     protected function renderIcon(string $icon): string
     {
-        return $this->container->get('templating')->render('@SolidInvoiceMenu/icon.html.twig', ['icon' => $icon]);
+        return $this->twig->render('@SolidInvoiceMenu/icon.html.twig', ['icon' => $icon]);
+    }
+
+    protected function renderLinkElement(ItemInterface $item, array $options)
+    {
+        $attributes = $item->getLinkAttributes();
+
+        $attributes['class'] .= $item->isCurrent() ? ' '.$options['currentClass'] : '';
+
+        return \sprintf('<a href="%s"%s>%s</a>', $this->escape($item->getUri()), $this->renderHtmlAttributes($attributes), $this->renderLabel($item, $options));
     }
 }

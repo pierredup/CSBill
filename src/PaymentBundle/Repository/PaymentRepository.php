@@ -13,17 +13,23 @@ declare(strict_types=1);
 
 namespace SolidInvoice\PaymentBundle\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use SolidInvoice\ClientBundle\Entity\Client;
 use SolidInvoice\InvoiceBundle\Entity\Invoice;
 use SolidInvoice\PaymentBundle\Entity\Payment;
 use SolidInvoice\PaymentBundle\Model\Status;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query;
-use Doctrine\ORM\QueryBuilder;
 
-class PaymentRepository extends EntityRepository
+class PaymentRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Payment::class);
+    }
+
     /**
      * Gets the total income that was received.
      *
@@ -31,6 +37,8 @@ class PaymentRepository extends EntityRepository
      * @param bool                                     $groupByCurrency
      *
      * @return array|int
+     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function getTotalIncome(Client $client = null, $groupByCurrency = false)
     {
@@ -62,11 +70,8 @@ class PaymentRepository extends EntityRepository
     /**
      * Returns an array of all the payments for an invoice.
      *
-     * @param Invoice $invoice
-     * @param string  $orderField
-     * @param string  $sort
-     *
-     * @return array
+     * @param string $orderField
+     * @param string $sort
      */
     public function getPaymentsForInvoice(Invoice $invoice, string $orderField = null, $sort = 'DESC'): array
     {
@@ -84,8 +89,6 @@ class PaymentRepository extends EntityRepository
     /**
      * @param string $orderField
      * @param string $sort
-     *
-     * @return QueryBuilder
      */
     protected function getPaymentQueryBuilder(string $orderField = null, $sort = 'DESC'): QueryBuilder
     {
@@ -117,10 +120,6 @@ class PaymentRepository extends EntityRepository
 
     /**
      * Returns an array of all the payments for an invoice.
-     *
-     * @param Invoice $invoice
-     *
-     * @return int
      */
     public function getTotalPaidForInvoice(Invoice $invoice): int
     {
@@ -145,11 +144,8 @@ class PaymentRepository extends EntityRepository
     /**
      * Returns an array of all the payments for a client.
      *
-     * @param Client $client
      * @param string $orderField
      * @param string $sort
-     *
-     * @return array
      */
     public function getPaymentsForClient(Client $client, string $orderField = null, $sort = 'DESC'): array
     {
@@ -166,10 +162,6 @@ class PaymentRepository extends EntityRepository
 
     /**
      * Gets the most recent created payments.
-     *
-     * @param int $limit
-     *
-     * @return array
      */
     public function getRecentPayments(int $limit = 5): array
     {
@@ -191,8 +183,6 @@ class PaymentRepository extends EntityRepository
 
     /**
      * @param \DateTime $timestamp
-     *
-     * @return array
      */
     public function getPaymentsList(\DateTime $timestamp = null): array
     {
@@ -218,12 +208,6 @@ class PaymentRepository extends EntityRepository
         return $results;
     }
 
-    /**
-     * @param Query  $query
-     * @param string $dateFormat
-     *
-     * @return array
-     */
     private function formatDate(Query $query, string $dateFormat = 'Y-m-d'): array
     {
         $payments = [];
@@ -243,9 +227,6 @@ class PaymentRepository extends EntityRepository
         return $payments;
     }
 
-    /**
-     * @return array
-     */
     public function getPaymentsByMonth(): array
     {
         $queryBuilder = $this->createQueryBuilder('p');
@@ -271,7 +252,6 @@ class PaymentRepository extends EntityRepository
 
     /**
      * @param Payment[]|Collection $payments
-     * @param string               $status
      *
      * @return mixed
      */
@@ -296,11 +276,6 @@ class PaymentRepository extends EntityRepository
         return $qb->getQuery()->execute();
     }
 
-    /**
-     * @param array $parameters
-     *
-     * @return \Doctrine\ORM\QueryBuilder
-     */
     public function getGridQuery(array $parameters = []): QueryBuilder
     {
         $qb = $this->createQueryBuilder('p');
@@ -323,9 +298,6 @@ class PaymentRepository extends EntityRepository
         return $qb;
     }
 
-    /**
-     * @param Client $client
-     */
     public function updateCurrency(Client $client)
     {
         $filters = $this->getEntityManager()->getFilters();

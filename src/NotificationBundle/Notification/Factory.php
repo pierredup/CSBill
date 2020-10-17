@@ -16,15 +16,15 @@ namespace SolidInvoice\NotificationBundle\Notification;
 use Namshi\Notificator\NotificationInterface;
 use SolidInvoice\SettingsBundle\Exception\InvalidSettingException;
 use SolidInvoice\SettingsBundle\SystemConfig;
-use Symfony\Component\Templating\EngineInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
 class Factory
 {
     /**
-     * @var EngineInterface
+     * @var Environment
      */
-    private $templating;
+    private $twig;
 
     /**
      * @var TranslatorInterface
@@ -36,21 +36,14 @@ class Factory
      */
     private $settings;
 
-    /**
-     * @param EngineInterface     $templating
-     * @param TranslatorInterface $translator
-     * @param SystemConfig        $settings
-     */
-    public function __construct(EngineInterface $templating, TranslatorInterface $translator, SystemConfig $settings)
+    public function __construct(Environment $twig, TranslatorInterface $translator, SystemConfig $settings)
     {
-        $this->templating = $templating;
+        $this->twig = $twig;
         $this->translator = $translator;
         $this->settings = $settings;
     }
 
     /**
-     * @param NotificationMessageInterface $message
-     *
      * @return SwiftMailerNotification
      *
      * @throws \SolidInvoice\SettingsBundle\Exception\InvalidSettingException
@@ -73,19 +66,19 @@ class Factory
 
         switch ($format) {
             case 'html':
-                $swiftMessage->setBody($message->getHtmlContent($this->templating), 'text/html');
+                $swiftMessage->setBody($message->getHtmlContent($this->twig), 'text/html');
 
                 break;
 
             case 'text':
-                $swiftMessage->setBody($message->getTextContent($this->templating), 'text/plain');
+                $swiftMessage->setBody($message->getTextContent($this->twig), 'text/plain');
 
                 break;
 
             case 'both':
             default:
-                $swiftMessage->setBody($message->getHtmlContent($this->templating), 'text/html');
-                $swiftMessage->addPart($message->getTextContent($this->templating), 'text/plain');
+                $swiftMessage->setBody($message->getHtmlContent($this->twig), 'text/html');
+                $swiftMessage->addPart($message->getTextContent($this->twig), 'text/plain');
 
                 break;
         }
@@ -94,13 +87,10 @@ class Factory
     }
 
     /**
-     * @param string                       $cellphone
-     * @param NotificationMessageInterface $message
-     *
      * @return TwilioNotification
      */
     public function createSmsNotification(string $cellphone, NotificationMessageInterface $message): NotificationInterface
     {
-        return new TwilioNotification($cellphone, $message->getTextContent($this->templating));
+        return new TwilioNotification($cellphone, $message->getTextContent($this->twig));
     }
 }

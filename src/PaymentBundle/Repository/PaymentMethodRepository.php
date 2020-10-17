@@ -13,16 +13,18 @@ declare(strict_types=1);
 
 namespace SolidInvoice\PaymentBundle\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\NoResultException;
+use SolidInvoice\PaymentBundle\Entity\PaymentMethod;
 
-class PaymentMethodRepository extends EntityRepository
+class PaymentMethodRepository extends ServiceEntityRepository
 {
-    /**
-     * @param string $gatewayName
-     *
-     * @return array
-     */
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, PaymentMethod::class);
+    }
+
     public function getSettingsForMethodArray(string $gatewayName): array
     {
         $queryBuilder = $this->createQueryBuilder('pm');
@@ -42,10 +44,6 @@ class PaymentMethodRepository extends EntityRepository
 
     /**
      * Get the total number of payment gateways configured.
-     *
-     * @param bool $includeInternal
-     *
-     * @return int
      */
     public function getTotalMethodsConfigured(bool $includeInternal = true): int
     {

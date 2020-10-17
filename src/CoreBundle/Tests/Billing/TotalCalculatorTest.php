@@ -13,6 +13,10 @@ declare(strict_types=1);
 
 namespace SolidInvoice\CoreBundle\Tests\Billing;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Money\Currency;
+use Money\Money;
+use PHPUnit\Framework\TestCase;
 use SolidInvoice\CoreBundle\Billing\TotalCalculator;
 use SolidInvoice\CoreBundle\Entity\Discount;
 use SolidInvoice\CoreBundle\Exception\UnexpectedTypeException;
@@ -23,17 +27,13 @@ use SolidInvoice\InvoiceBundle\Model\Graph;
 use SolidInvoice\PaymentBundle\Entity\Payment;
 use SolidInvoice\PaymentBundle\Model\Status;
 use SolidInvoice\TaxBundle\Entity\Tax;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Money\Currency;
-use Money\Money;
-use PHPUnit\Framework\TestCase;
 
 class TotalCalculatorTest extends TestCase
 {
-    use DoctrineTestTrait,
-        MockeryPHPUnitIntegration;
+    use DoctrineTestTrait;
+    use MockeryPHPUnitIntegration;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         \SolidInvoice\MoneyBundle\Entity\Money::setBaseCurrency('USD');

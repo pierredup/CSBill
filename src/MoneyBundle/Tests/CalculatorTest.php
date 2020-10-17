@@ -22,7 +22,7 @@ use SolidInvoice\MoneyBundle\Entity\Money;
 
 class CalculatorTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -45,7 +45,7 @@ class CalculatorTest extends TestCase
         $discount->setType(Discount::TYPE_PERCENTAGE);
         $discount->setValue(10);
         $entity->setDiscount($discount);
-        $entity->setBaseTotal(new \Money\Money(20000 , new Currency('USD')));
+        $entity->setBaseTotal(new \Money\Money(20000, new Currency('USD')));
 
         $this->assertEquals(new \Money\Money(2000, new Currency('USD')), $calculator->calculateDiscount($entity));
     }

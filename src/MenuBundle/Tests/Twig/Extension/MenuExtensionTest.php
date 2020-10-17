@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace SolidInvoice\MenuBundle\Tests\Twig\Extension;
 
-use SolidInvoice\MenuBundle\Twig\Extension\MenuExtension;
-use Mockery as M;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery as M;
 use PHPUnit\Framework\TestCase;
+use SolidInvoice\MenuBundle\Twig\Extension\MenuExtension;
 
 class MenuExtensionTest extends TestCase
 {
@@ -27,7 +27,7 @@ class MenuExtensionTest extends TestCase
      */
     private $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->extension = new MenuExtension();
     }
@@ -41,11 +41,9 @@ class MenuExtensionTest extends TestCase
     {
         $functions = $this->extension->getFunctions();
 
-        $this->assertTrue(is_array($functions));
+        $this->assertIsArray($functions);
 
-        foreach ($functions as $function) {
-            $this->assertInstanceOf('Twig_SimpleFunction', $function);
-        }
+        $this->assertContainsOnlyInstancesOf('Twig_SimpleFunction', $functions);
     }
 
     public function testRenderMenu()

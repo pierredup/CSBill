@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace SolidInvoice\MoneyBundle\Form\Type;
 
-use SolidInvoice\CoreBundle\Form\Type\Select2Type;
 use Doctrine\Common\Collections\ArrayCollection;
 use Money\Currencies\ISOCurrencies;
 use Money\Currency;
+use SolidInvoice\CoreBundle\Form\Type\Select2Type;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Intl\Intl;
+use Symfony\Component\Intl\Currencies;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CurrencyType extends AbstractType
@@ -35,7 +35,7 @@ class CurrencyType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefault('choices', $this->getCurrencyChoices());
+        $resolver->setDefault('choices', iterator_to_array($this->getCurrencyChoices()));
     }
 
     /**
@@ -51,7 +51,7 @@ class CurrencyType extends AbstractType
      */
     private function getCurrencyChoices()
     {
-        $currencyList = Intl::getCurrencyBundle()->getCurrencyNames($this->locale);
+        $currencyList = Currencies::getNames($this->locale);
 
         $collection = (new ArrayCollection(iterator_to_array((new ISOCurrencies())->getIterator())))
             ->filter(function (Currency $currency) use ($currencyList) {
