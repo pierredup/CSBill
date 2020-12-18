@@ -90,6 +90,8 @@ class RequestListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event)
     {
+        return;
+
         if (HttpKernel::MASTER_REQUEST !== $event->getRequestType()) {
             return;
         }
