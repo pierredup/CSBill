@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace SolidInvoice\CoreBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 use SolidInvoice\CoreBundle\Entity\Version;
 
@@ -29,17 +30,24 @@ class VersionRepository extends ServiceEntityRepository
      *
      * @param $version
      */
-    public function updateVersion($version)
+    public function updateVersion($version): void
     {
         $entityManager = $this->getEntityManager();
-        $query = $entityManager->createQuery('DELETE FROM '.Version::class);
 
-        $query->execute();
+        $qb = $this->createQueryBuilder('v');
+        $qb->delete()
+            ->getQuery()
+            ->execute();
 
         $entity = new Version($version);
-        $entityManager->persist($entity);
 
-        $entityManager->flush();
+        try {
+            $entityManager->persist($entity);
+
+            $entityManager->flush();
+        } catch (ORMException $e) {
+            // noop
+        }
     }
 
     public function getCurrentVersion(): string
